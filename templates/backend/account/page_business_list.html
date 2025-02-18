@@ -1,0 +1,155 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Corporate Customers</h2>
+
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 col-md-6 me-auto">
+                    <input type="text" placeholder="Search..." class="form-control" name="search">
+                </div>
+                <div class="col-lg-2 col-6 col-md-3">
+
+                </div>
+                <div class="col-lg-2 col-6 col-md-3">
+                    <select class="form-select" name="type">
+                        <option value='0'>Normal</option>
+                        <option value='1'>Blocked</option>
+
+
+                    </select>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-primary"><i class="material-icons md-plus"></i> Apply</a>
+                </div>
+            </div>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4">
+                {%for item in items%}
+                <div class="col">
+                    <div class="card card-user">
+
+                        <div class="card-body">
+                            <h5 class="card-title mt-50">Company Name: {{item.company_name}}</h5>
+                            <div class="card-text text-muted">
+                                <p class="m-0">Contact: {{item.contact_name}}</p>
+                                <p>Phone: {{item.phone_number}}</p>
+                                <p>Email: {{item.phone_number}}</p>
+                                <p>Credit: {{item.credit_limited}}</p>
+                                <p>Credit Used: {{item.credit_used}}</p>
+                                {% if item.status == '0' %}
+                                <p>Status: Normal</p>
+                                {%elif item.status == '1' %}
+                                <p>Status: Block</p>
+                                {%endif%}
+                                <a href="{{url_for('backend.edit_b_account', user_id = item.user_id)}}"
+                                    class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
+                                {% if item.status == '0' %}
+                                <a href="{{url_for('backend.delete_account', user_id = item.user_id,type= 4)}}"
+                                    class="btn btn-sm btn-brand rounded font-sm mt-15">Block</a>
+                                {%elif item.status == '1' %}
+                                <a href="{{url_for('backend.activate_account', user_id = item.user_id,type= 4)}}"
+                                    class="btn btn-sm btn-brand rounded font-sm mt-15">Activate</a>
+                                {%endif%}
+                                <p>
+                                    <a href="#"  class="enterprise-link" data-bs-toggle="modal" data-bs-target="#exampleModal"  onclick="openChat('{{item.user_id}}')">Send Message</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- col.// -->
+                {%endfor%}
+            </div> <!-- row.// -->
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+    <div class="pagination-area mt-30 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+
+                {% if pagination.page > 1 %}
+                <li class="page-item"> <a
+                        href="{{ url_for('backend.account_list', page=pagination.page - 1,per_page = request.args.get('per_page'),type = request.args.get('type')) }}">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for page_num in range(1, pagination.num_pages + 1) %}
+                <li class="page-item"> <a
+                        href="{{ url_for('backend.account_list', page=page_num,per_page = request.args.get('per_page'),type = request.args.get('type')) }}">{{
+                        page_num }}</a></li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.num_pages %} <li class="page-item"> <a
+                        href="{{ url_for('backend.account_list', page=pagination.page + 1,per_page = request.args.get('per_page'),type = request.args.get('type')) }}">Next</a>
+                    </li>
+                    {% endif %}
+
+
+            </ul>
+        </nav>
+    </div>
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Send Message</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="applicationId" class="form-label">Subject:</label>
+                <input type="text" class="form-control" id="subject" >
+              </div>
+              <div class="mb-3">
+                <label for="comment" class="form-label">Comment:</label>
+                <textarea class="form-control" id="content" rows="6" style="height: auto;"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+              
+              <button type="button" class="btn btn-primary" onclick="updateApplication()">Send</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+</section>
+<script>
+    var userid = null;
+function updateApplication() {
+    var subject = $('#subject').val();
+    var content = $('#content').val();
+
+    $.ajax({
+      url: '/backend/send_system_message',
+      type: 'POST',
+      data: {
+        user_id: userid,
+        content: content,
+        subject: subject
+      },
+      success: function (response) {
+        alert('send message successfully');
+        location.reload();
+      },
+      error: function (error) {
+        alert('Failed to update application');
+      }
+    });
+  }
+function openChat(user_id) {
+    $('#exampleModal').modal('show');
+    userid = user_id ;
+}
+</script>
+
+
+{% endblock %}

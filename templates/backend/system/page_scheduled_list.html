@@ -1,0 +1,44 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <h2 class="content-title">Scheduled Task Record</h2>
+       
+    </div>
+    <div class="card mb-4">
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                          
+                            <td>Month - Year</td>
+                            <th>Completed Time</th>
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {%for s in scheduled_list %}
+                        <tr>
+                           
+                            <td>{{s.month_year}}</td>
+                            <td>{{s.timestamp.strftime('%d/%m/%Y
+                                %H:%M:%S')}}</td>
+                            
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table> <!-- table-responsive.// -->
+            </div>
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+
+</section> <!-- content-main end// -->
+
+{% endblock %}

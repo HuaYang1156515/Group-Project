@@ -1,0 +1,117 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+   
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Edit Profile</h2>
+               
+            </div>
+        </div>
+        <form action ="{{url_for('backend.edit_account',user_id = account.user_id)}}" method="post" enctype="multipart/form-data">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                    
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">First Name</label>
+                            <input type="text" placeholder="Type here" name="f_name" class="form-control" value="{{account.first_name}}" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" placeholder="Type here" name="l_name" class="form-control"  value="{{account.last_name}}" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Gender</label>
+                                    <div class="row gx-2">
+                                        <select id="gener" name="gender" style="border: 1px solid black;">
+                                            <option value="1 " {% if account.gender== '1' %} selected {%
+                                                endif %}>Male</option>
+                                            <option value="2" {% if account.gender== '2' %} selected {%
+                                                endif %}>Female</option>
+                                            <option value="3" {% if account.gender== '3' %} selected {%
+                                                endif %}>Ohters</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Email</label>
+                                    <input placeholder="email" type="text" class="form-control" name="email" value="{{account.email}}" required>
+                                </div>
+                            </div>
+                            
+                            <div class="col-lg-4">
+                                <label class="form-label">Phone Number</label>
+                                <input placeholder="phone" type="text" class="form-control" name="phone" value="{{account.phone_number}}" pattern="[0-9]+" required>
+                            </div>
+                        </div>
+                                             
+                </div>
+            </div> <!-- card end// -->
+        </div>
+        <div class="col-lg-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Media</h4>
+                </div>
+                <div class="card-body">
+                    <div class="input-upload">
+                        <img src="{{account.pro_img}}" alt="" >
+                        <input type="text" id="profile_image" name="pro_img" value="{{ account.pro_img }}" hidden="true"><br>
+                        <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                    </div>
+                </div>
+            </div> <!-- card end// -->
+           
+            <div>
+                <button class="btn btn-md rounded font-sm hover-up" type="submit">Save</button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+    <div class="card-body">
+        <div class="card-header">
+            <h4>Update Password</h4>
+        </div>
+        <form action="{{ url_for('backend.update_pwd') }}" method="post"
+            name="enq">
+            <div class="form-group col-md-12">
+                <label>Current Password <span class="required">*</span></label>
+                <input required="" class="form-control square" name="password"
+                    type="password">
+            </div>
+            <div class="form-group col-md-12">
+                <label>New Password <span class="required">*</span></label>
+                <input required="" class="form-control square" name="npassword"
+                    type="password">
+            </div>
+            <div class="form-group col-md-12">
+                <label>Confirm Password <span class="required">*</span></label>
+                <input required="" class="form-control square" name="cpassword"
+                    type="password">
+            </div>
+            <div class="col-md-12">
+                <button type="submit" class="btn btn-fill-out submit" name="submit"
+                    value="Submit">Update</button>
+            </div>
+        </form>
+    </div>
+
+
+</section> <!-- content-main end// -->
+
+{% endblock %}

@@ -1,0 +1,175 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+   
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add New Product</h2>
+               
+            </div>
+        </div>
+        <form action ="{{url_for('backend.insert_product')}}" method="post" enctype="multipart/form-data">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <div class="card-body">
+                   
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Product name</label>
+                            <input type="text" placeholder="Type here" name="name" class="form-control" id="product_name">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Full description</label>
+                            <textarea placeholder="Type here" class="form-control" rows="4" name="desc"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Regular price</label>
+                                    <div class="row gx-2">
+                                        <input placeholder="$" type="text" class="form-control" name="price">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">Production cost</label>
+                                    <input placeholder="$" type="text" class="form-control" name="cost" >
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">If Promotion</label>
+                                <input placeholder="$" type="text" class="form-control" name="if_pm" value="0">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label class="form-label">Product code</label>
+                                    <input type="text" placeholder="code" name="code" class="form-control" id="product_name">
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="mb-4">
+                                    <label for="product_name" class="form-label">Brand</label>
+                                    <select class="form-select" name="brand">
+                                       
+                                            {%for ba in brand_list%}
+                                            <option value="{{ba.brand_id}}"> {{ba.brand_name}}</option>
+                                            {%endfor%}
+                                        
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                   
+                
+                     
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Weight</label>
+                            <input type="text" placeholder="gam" class="form-control" name="weight" id="product_name">
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">Feature</label>
+                            <input type="text" class="form-control" name="feature" id="product_name">
+                        </div>
+                       
+                    
+                </div>
+            </div> <!-- card end// -->
+        </div>
+        <div class="col-lg-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Media</h4>
+                </div>
+                <div class="card-body">
+                    <div class="card-body">
+                        <div class="input-upload">
+                           
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                           
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-upload">
+                            
+                            <input type="file" name="pics" id="photos" pattern=".*\.(jpg|jpeg|png|gif)$" title="Please upload a valid image file name (jpg, jpeg, png, gif)">
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- card end// -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Organization</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row gx-2">
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">First Category</label>
+                            <select class="form-select" name="f_category">
+                                {%for ca in one_category_list%}
+                                <option value="{{ca.cate_id}}"> {{ca.name}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                        <div class="col-sm-6 mb-3">
+                            <label class="form-label">Second category</label>
+                            <select class="form-select" name="s_category">
+                               {%for ca in two_category_list%}
+                               <option value="{{ca.cate_id}}"> {{ca.name}}</option>
+                               {%endfor%}
+                            </select>
+                        </div>
+                      
+                    </div> <!-- row.// -->
+                </div>
+            </div> <!-- card end// -->
+            <div>
+                <button class="btn btn-md rounded font-sm hover-up" type="submit">Save</button>
+            </div>
+        </div>
+        </form>
+    </div>
+
+</section> <!-- content-main end// -->
+
+{% endblock %}

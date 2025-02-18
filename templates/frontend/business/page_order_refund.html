@@ -1,0 +1,120 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}
+Belmont Station Merino & Possum - System Message
+{% endblock %}
+
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> System Message
+
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center">
+                            <thead>
+                                <tr class="main-heading">
+                                    <th scope="col">Sender Name</th>
+                                    <th scope="col">Subject</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for m in messages_list %}
+                                <tr>
+                                    <td>{{m.username}}</td>
+                                    <td>{{m.subject}}</td>
+                                    <td>{%if m.status == '0' %} Unread {%else%} read {%endif%}</td>
+                                    <td>{{m.created_at.strftime('%d/%m/%Y %H:%M:%S')}}</td>
+                                    <td>
+                                        <a href="#" class="enterprise-link" data-bs-toggle="modal"
+                                            data-bs-target="#exampleModal" onclick="openmessage('{{m.id}}')">View Message</a> 
+                                      
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Message</h5>
+
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="applicationId" class="form-label">Message Subject:</label>
+                        <input type="text" class="form-control" id="subject">
+                    </div>
+                    <div id="chatbox">
+                        <div id="messages">Content</div>
+                        <textarea class="form-control" id="content" rows="5"
+                            style="height: auto;"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                        onclick="closemessage()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </section>
+</main>
+
+<script>
+   
+
+
+    function openmessage(id) {
+        $('#exampleModal').modal('show');
+        readmessage(id);
+    }
+
+    function closemessage() {
+        
+        $('#exampleModal').modal('hide');
+        location.reload();
+
+    }
+    function readmessage(message_id) {
+        
+        $.ajax({
+            url: '/frontend/get_system_message',
+            type: 'POST',
+            data: {
+                message_id: message_id,
+            },
+            success: function (response) {
+                $('#subject').val(response.subject);
+                $('#content').val(response.content);
+                
+            },
+            error: function (error) {
+                alert('Failed to update status');
+            }
+        });
+    }
+
+
+</script>
+{% endblock %}

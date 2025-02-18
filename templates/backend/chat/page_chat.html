@@ -1,0 +1,245 @@
+{% extends "backend/base.html" %}
+{% block title %}
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+
+  <div class="row justify-content-center">
+
+    <div class="content-header">
+      <h1>Waiting Customers</h1>
+    </div>
+    <div class="card-body">
+
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col">#ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Status</th>
+              <th scope="col"> Action </th>
+            </tr>
+          </thead>
+          <tbody id="waitingCustomersList">
+          </tbody>
+        </table>
+      </div> <!-- table-responsive //end -->
+
+
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Online Chat</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div id="chatbox">
+                <div id="messages"></div>
+                <textarea class="form-control" id="message" placeholder="Enter your message" rows="2"
+                  style="height: auto;"></textarea>
+              </div>
+            </div>
+            <div class="modal-footer">
+
+              <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                onclick="closeChat()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  var session_id = null;
+  var user_id = null;
+  let isPolling = true;
+
+  function fetchUserId() {
+    fetch('/backend/get_user_id')
+      .then(response => response.json())
+      .then(data => {
+        user_id = data.user_id;
+        console.log('Fetched user_id:', user_id);
+      })
+      .catch(error => {
+        console.error('Error fetching user_id:', error);
+      });
+  }
+
+
+
+  function fetchWaitingCustomers() {
+    fetch('/backend/waiting_customers')
+      .then(response => response.json())
+      .then(data => {
+        const waitingCustomersList = document.getElementById('waitingCustomersList');
+        waitingCustomersList.innerHTML = '';
+        data.forEach(customer => {
+          const tr = document.createElement('tr');
+
+          const tdId = document.createElement('td');
+          tdId.textContent = customer.session_id;
+
+          const tdName = document.createElement('td');
+          tdName.textContent = customer.username;
+
+          const tdStatus = document.createElement('td');
+          tdStatus.textContent = customer.status;
+
+          const tdAction = document.createElement('td');
+          const joinButton = document.createElement('button');
+          joinButton.textContent = 'Join';
+          joinButton.onclick = () => joinChat(customer.session_id);
+          tdAction.appendChild(joinButton);
+
+          tr.appendChild(tdId);
+          tr.appendChild(tdName);
+          tr.appendChild(tdStatus);
+          tr.appendChild(tdAction);
+
+          waitingCustomersList.appendChild(tr);
+        });
+      })
+      .catch(error => {
+        console.error('Error fetching waiting customers:', error);
+      });
+  }
+
+  function joinChat(sessionId) {
+    fetch('/backend/join_chat', {
+      method: 'POST',
+      body: JSON.stringify({ session_id: sessionId }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          session_id = sessionId;
+          openChat();
+
+          alert('Please wait a few seconds. The system is loading');
+          fetchAndPollMessages(session_id); // Start fetching history and polling for new messages
+        } else {
+          alert('Failed to join chat');
+        }
+      });
+  }
+
+  function fetchAndPollMessages(sessionId) {
+    if (!isPolling) return;
+    fetch('/backend/chat_history', {
+      method: 'POST',
+      body: JSON.stringify({ session_id: sessionId }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(data => {
+        var messagesDiv = document.getElementById('messages');
+        messagesDiv.innerHTML = ''; // 清空消息列表
+        data.forEach(chat => {
+          var newMessage = document.createElement('div');
+          newMessage.classList.add('message');
+
+          var messageContent = document.createElement('div');
+          messageContent.classList.add('message-content');
+
+          if (chat.sender_id == user_id) {
+            newMessage.classList.add('right');
+            messageContent.textContent = 'me: ' + chat.chat;
+          } else {
+            newMessage.classList.add('left');
+            messageContent.textContent = chat.username + ': ' + chat.chat;
+          }
+
+          newMessage.appendChild(messageContent);
+          messagesDiv.appendChild(newMessage);
+        });
+
+        // 自动滚动到底部
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        if (isPolling) {
+          // Start polling for new messages
+          setTimeout(fetchAndPollMessages(sessionId, 1000));
+        }
+        
+      })
+      .catch(error => {
+        console.error('Error fetching chat history:', error);
+
+        // When an error occurs, continue long polling and try again after 5 seconds.
+        setTimeout(() => fetchAndPollMessages(sessionId), 5000);
+      });
+  }
+
+  function openChat() {
+    $('#exampleModal').modal('show');
+    fetchUserId();
+  }
+
+  function closeChat() {
+    isPolling = false;
+    $('#exampleModal').modal('hide');
+    location.reload();
+  }
+
+  function sendMessage() {
+    var message = document.getElementById('message').value;
+    fetch('/backend/send_message', {
+      method: 'POST',
+      body: JSON.stringify({ session_id: session_id, message: message }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('message').value = '';
+        fetchAndPollMessages(session_id)// Immediately poll for new messages after sending one
+      })
+      .catch(error => {
+        console.error('Error sending message:', error);
+      });
+  }
+
+  fetchWaitingCustomers();
+</script>
+
+<style>
+  .message {
+    display: flex;
+    margin: 10px 0;
+  }
+
+  .message.right {
+    justify-content: flex-end;
+  }
+
+  .message.left {
+    justify-content: flex-start;
+  }
+
+  .message-content {
+    padding: 10px;
+    border-radius: 5px;
+    max-width: 60%;
+  }
+
+  .message.right .message-content {
+    background-color: #d1ffd1;
+    text-align: right;
+  }
+
+  .message.left .message-content {
+    background-color: #ffd1d1;
+    text-align: left;
+  }
+</style>
+
+{% endblock %}

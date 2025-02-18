@@ -1,0 +1,193 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+
+{% block content %}
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Dashboard </h2>
+            <p>Whole data about your business here</p>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-primary-light"><i
+                            class="text-primary material-icons md-monetization_on"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Revenue</h6>
+                        <span>${{revenue}}</span>
+                        <span class="text-sm">
+                            Shipping fees are not included
+                        </span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-success-light"><i
+                            class="text-success material-icons md-local_shipping"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Orders</h6> <span>{{orders}}</span>
+                        <span class="text-sm">
+                            Excluding orders in transit
+                        </span>
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-warning-light"><i
+                            class="text-warning material-icons md-qr_code"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Products</h6> <span>{{products}}</span>
+
+                    </div>
+                </article>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="card card-body mb-4">
+                <article class="icontext">
+                    <span class="icon icon-sm rounded-circle bg-info-light"><i
+                            class="text-info material-icons md-shopping_basket"></i></span>
+                    <div class="text">
+                        <h6 class="mb-1 card-title">Monthly Earning</h6> <span>${{monthly_revenue}}</span>
+
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xl-8 col-lg-12">
+            <div class="card mb-4">
+                <article class="card-body">
+                    <h5 class="card-title">Sale statistics</h5>
+                    <canvas id="myChart" height="120px"></canvas>
+                </article>
+            </div>
+            <div class="row">
+                <div class="col-lg-5">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">New General Members</h5>
+                            <div class="new-member-list">
+                                {% for g in new_g_customes%}
+                                <div class="d-flex align-items-center justify-content-between mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="/static/backend/imgs/people/avatar4.jpg" alt="" class="avatar">
+                                        <div>
+                                            <h6>{{g.username}}</h6>
+                                           
+                                        </div>
+                                    </div>
+
+                                </div>
+                                {%endfor%}
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="card mb-4">
+                        <article class="card-body">
+                            <h5 class="card-title">New Corporate Members</h5>
+                            <div class="new-member-list">
+                                {% for g in new_b_customes%}
+                                <div class="d-flex align-items-center justify-content-between mb-4">
+                                    <div class="d-flex align-items-center">
+                                        <img src="/static/backend/imgs/people/avatar4.jpg" alt="" class="avatar">
+                                        <div>
+                                            <h6>{{g.username}}</h6>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                {%endfor%}
+                            </div>
+                        </article>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-4 col-lg-12">
+            <div class="card mb-4">
+                <article class="card-body">
+                    <h5 class="card-title">Revenue Base on Area</h5>
+                    <canvas id="myChart2" height="217"></canvas>
+                </article>
+            </div>
+            <div class="card mb-4">
+                <article class="card-body">
+                    <h5 class="card-title">Monthly Products Sales</h5>
+                    {%for c in products_top %}
+                    <span >Product Name: {{c.product_name}} - </span>
+                    
+                    <span>amount: {{c.total}}</span>   
+                   
+                    {%endfor%}
+                </article>
+            </div>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <h4 class="card-title">Latest orders</h4>
+            
+        </header>
+        <div class="card-body">
+            <div class="table-responsive">
+                <div class="table-responsive">
+                    <table class="table align-middle table-nowrap mb-0">
+                        <thead class="table-light">
+                            <tr>
+                            <th class="align-middle">#ID</th>
+                            <th class="align-middle" class="align-middle" scope="col">Name</th>
+                            <th class="align-middle" scope="col">Order Money</th>
+                            <th class="align-middle" scope="col">Shipping fee</th>
+                            <th class="align-middle" scope="col">Total</th>
+                            <th class="align-middle" scope="col">Payment</th>
+                            <th class="align-middle" scope="col">Status</th>
+                            <th class="align-middle" scope="col">Date</th>
+                             
+                            </tr>
+                        </thead>
+                        <tbody id="g_order_list">
+                            {%for item in order_list%}
+                            <tr>
+                                <td>{{item.order_sn}}</td>
+                                <td><b>{{item.invoice_title}}</b></td>
+                                <td>${{item.order_money}}</td>
+                                <td>${{item.shipping_money}}</td>
+                                <td>${{item.district_money}}</td>
+                                <td>${{item.payment_money}}</td>
+                                <td><span class="badge rounded-pill alert-warning">{%if item.order_status == 1%} Unpaid
+                                        {%elif item.order_status == 2%}Paid and order is Preparing {%elif item.order_status
+                                        == 3%} Delivery
+                                        {%elif item.order_status == 0%}Completed {%elif item.order_status == 4%} Canceled
+                                        {%endif%}</span></td>
+                                <td>{{item.create_time}}</td>
+                               
+                            </tr>
+                            {%endfor%}
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div> <!-- table-responsive end// -->
+        </div>
+    </div>
+    
+</section> <!-- content-main end// -->
+
+{% endblock %}

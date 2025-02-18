@@ -1,0 +1,56 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+   
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="login_wrap widget-taber-content p-30 background-white border-radius-5">
+                <div class="padding_eight_all bg-white">
+                    <div class="heading_s1">
+                        <h3 class="mb-30">Create an Account</h3>
+                    </div>
+                    
+                    <form action="{{ url_for('backend.insert_account') }}" method="post" onsubmit="return checkAgreement()">
+                        <div class="mb-4">>
+                            <input type="text" required="" name="username" placeholder="Username (Only characters and numbers.)" class="form-control">
+                        </div>
+                        <div class="mb-4">>
+                            <input type="text" required="" name="email" placeholder="Email" class="form-control">
+                        </div>
+                        <div class="mb-4">>
+                            <input required="" type="password" name="password" placeholder="Password (minimum 8 character)" class="form-control">
+                        </div>
+                        <div  class="mb-4">>
+                            <input required="" type="password" name="password" placeholder="Confirm password" class="form-control">
+                        </div>
+                       <div class="mb-4">>
+                        <label>employee type <span class="required">*</span></label>
+                        <select id="gener" name="type" style="border: 1px solid black;">
+                            <option value="1">staff</option>
+                            <option value="2">manager</option>
+                           
+                        </select>
+
+                       </div>
+                        <div class="form-group">
+                            <button class="btn btn-md rounded font-sm hover-up" type="submit">Submit &amp; Register</button>
+                        </div>
+                    </form>
+                    
+                   
+                    
+                </div>
+            </div>
+        </div>
+        
+       
+    </div>
+
+</section> <!-- content-main end// -->
+
+{% endblock %}

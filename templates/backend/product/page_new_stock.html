@@ -1,0 +1,119 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add Product Stock</h2>
+
+            </div>
+        </div>
+        <form action="{{url_for('backend.insert_product_stock',product_id = product.product_id)}}" method="post">
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h4>Basic</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-4">
+                            <input type="text" name="product_id" class="form-control" value="{{product.product_id}}"
+                                readonly>
+                            <label for="product_name" class="form-label">Product Code</label>
+                            <input type="text" placeholder="Type here" name="product_code" class="form-control"
+                                value="{{product.product_code}}" readonly>
+                        </div>
+                        <div class="mb-4">
+
+                            <label for="product_name" class="form-label">Product name</label>
+                            <input type="text" placeholder="Type here" name="name" class="form-control"
+                                value="{{product.product_name}}" readonly>
+                        </div>
+                        <div class="mb-4">
+
+                            <label class="form-label">Warehouse</label>
+                            <select class="form-select" name="warehouse">
+
+                                {%for warehouse in warehouse_list%}
+                                <option value="{{warehouse.w_id}}">{{warehouse.warehouse_name}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                        <div class="mb-4">
+
+                            <label class="form-label">Color</label>
+                            <select class="form-select" name="color">
+
+                                {%for color in color_list%}
+                                <option value="{{color.color_name}}">{{color.color_name}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">S</label>
+                                    <div class="row gx-2">
+                                        <input placeholder="$" type="text" class="form-control" name="s" value="0"
+                                            pattern="[0-9]+">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">M</label>
+                                    <input placeholder="$" type="text" class="form-control" name="m" value="0"
+                                        pattern="[0-9]+">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">L</label>
+                                <input placeholder="$" type="text" class="form-control" name="l" value="0"
+                                    pattern="[0-9]+">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">XL</label>
+                                    <div class="row gx-2">
+                                        <input placeholder="$" type="text" class="form-control" name="xl" value="0"
+                                            pattern="[0-9]+">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div class="mb-4">
+                                    <label class="form-label">XXL</label>
+                                    <input placeholder="$" type="text" class="form-control" name="xxl" value="0"
+                                        pattern="[0-9]+">
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <label class="form-label">XXXL</label>
+                                <input placeholder="$" type="text" class="form-control" name="xxxl" value="0"
+                                    pattern="[0-9]+">
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+                    <button class="btn btn-md rounded font-sm hover-up" type="submit">Save</button>
+                </div> <!-- card end// -->
+
+            </div>
+
+        </form>
+    </div>
+
+</section> <!-- content-main end// -->
+
+{% endblock %}

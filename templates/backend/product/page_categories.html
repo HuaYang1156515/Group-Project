@@ -1,0 +1,114 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Categories </h2>
+            <p>Add, edit or delete a category</p>
+        </div>
+        <div>
+            <input type="text" placeholder="Search Categories" class="form-control bg-white">
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <form action ="{{ url_for('backend.insert_category') }}" method="post" >
+                        <div class="mb-4">
+                            <label for="product_name" class="form-label">category id</label>
+                            <input type="text" placeholder="Type here" name ='cate_id' class="form-control" id="product_name" />
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Name</label>
+                            <input type="text" placeholder="Type here" name ='name' class="form-control" id="product_slug" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Parent</label>
+                            <select class="form-select" name ="parentid">
+                                {%for ca in categories_parent_list %}
+                                <option value="{{ca.parentid}}">{{ca.name}}</option>
+                                {%endfor%}
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Category Level</label>
+                            <select class="form-select" name ="level">
+                                
+                                <option value="1">first level</option>
+                                <option value="2">second level</option>
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="product_slug" class="form-label">Sort by </label>
+                            <input type="text" placeholder="Type here" name ='sortorder' class="form-control" id="product_slug" />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Description</label>
+                            <textarea placeholder="Type here" name= "description" class="form-control"></textarea>
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-primary">Create category</button>
+                        </div>
+                        
+                    </form>
+                </div>
+                <div class="col-md-9">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Level</th>
+                                    <th>Parent</th>
+                                    <th>Order</th>
+                                    <th class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {%for ca in categories %}
+                                <tr>
+                                    <td class="text-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="" />
+                                        </div>
+                                    </td>
+                                    <td>{{ca.cate_id}}</td>
+                                    <td><b>{{ca.name}}</b></td>
+                                    <td>{{ca.description}}</td>
+                                    <td>{{ca.category_level}}</td>
+                                    <td>{{ca.parent_name}}</td>
+                                    <td>{{ca.sortorder}}</td>
+                                    <td class="text-end">
+                                        <div class="dropdown">
+                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
+                                            <div class="dropdown-menu">
+                                              
+                                                <a class="dropdown-item text-danger" href="{{url_for('backend.delete_category', cate_id = ca.cate_id)}}">Delete</a>
+                                            </div>
+                                        </div> <!-- dropdown //end -->
+                                    </td>
+                                </tr>
+                                {%endfor%}
+                            
+                            </tbody>
+                        </table>
+                    </div>
+                </div> <!-- .col// -->
+            </div> <!-- .row // -->
+        </div> <!-- card body .// -->
+    </div> <!-- card .// -->
+</section>
+
+{% endblock %}

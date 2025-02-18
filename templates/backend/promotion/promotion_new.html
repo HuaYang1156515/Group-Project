@@ -1,0 +1,68 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add New Promotion</h2>
+
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>Basic</h4>
+                </div>
+                <form action="{{url_for('backend.insert_promotion')}}" method="post" enctype="multipart/form-data">
+                    <div class="card-body">
+
+                        <div class="mb-4">
+                            <label  class="form-label">Promotion name</label>
+                            <input type="text" placeholder="Type here" name="name" class="form-control" required>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Promotion Type</label>
+                            <select class="form-control select-active" name="type" required>
+                                <option value="1">Discount</option>
+                                <option value="2">Spend and Save</option>
+                                <option value="3">Promo Code</option>
+                                <option value="4">Gold Members Only</option>
+                                <option value="5">Buy and Save</option>
+                                <option value="6">Transfer Order amount to points</option>
+
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Start Time</label>
+                            <input type="date" placeholder="Type here" class="form-control" name="start_time" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">End Time</label>
+                            <input type="date" placeholder="Type here" class="form-control" name="end_time" required></textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Promotion Value</label>
+                            <input type="text" placeholder="Type here" class="form-control" name="value" required></textarea>
+                        </div>
+
+                    </div>
+                    <div>
+                        <button class="btn btn-md rounded font-sm hover-up" type="submit">Save</button>
+                    </div>
+                </form>
+            </div> <!-- card end// -->
+        </div>
+
+
+    </div>
+
+</section> <!-- content-main end// -->
+
+{% endblock %}

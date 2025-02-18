@@ -1,0 +1,9 @@
+
+/venv
+config/connect.py
+.vscode/launch.json
+__pycache__/app.cpython-311.pyc
+*.pyc
+config/connect.py
+config/connect.py
+config/connect.py

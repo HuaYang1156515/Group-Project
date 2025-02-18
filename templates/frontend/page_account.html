@@ -1,0 +1,721 @@
+﻿{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Account
+{% endblock %}
+
+
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+
+                <span></span> Account
+            </div>
+        </div>
+    </div>
+    <section class="pt-150 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="dashboard-menu">
+                                <ul class="nav flex-column" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="dashboard-tab" data-bs-toggle="tab"
+                                            href="#dashboard" role="tab" aria-controls="dashboard"
+                                            aria-selected="false"><i
+                                                class="fi-rs-settings-sliders mr-10"></i>Dashboard</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#orders"
+                                            role="tab" aria-controls="orders" aria-selected="false"><i
+                                                class="fi-rs-shopping-bag mr-10"></i>Orders</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="orders-tab" data-bs-toggle="tab" href="#product_refund"
+                                            role="tab" aria-controls="orders" aria-selected="false"><i
+                                                class="fi-rs-shopping-bag mr-10"></i>Product Refund</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="track-orders-tab" data-bs-toggle="tab"
+                                            href="#track-orders" role="tab" aria-controls="track-orders"
+                                            aria-selected="false"><i class="fi-rs-shopping-cart-check mr-10"></i>Track
+                                            Your Order</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="address-tab" data-bs-toggle="tab" href="#address"
+                                            role="tab" aria-controls="address" aria-selected="true"><i
+                                                class="fi-rs-marker mr-10"></i>My Address</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="account-detail-tab" data-bs-toggle="tab"
+                                            href="#account-detail" role="tab" aria-controls="account-detail"
+                                            aria-selected="true"><i class="fi-rs-user mr-10"></i>Account details</a>
+                                    </li>
+
+                                    <!-- Application only for CooperateClients -->
+                                    {%if current_user.is_authenticated and current_user.role == 4 %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="my-application-tab" data-bs-toggle="tab"
+                                            href="#my-application" role="tab" aria-controls="my-application"
+                                            aria-selected="true"><i class="fi-rs-marker mr-10"></i>My Application</a>
+                                    </li>
+                                    {%endif%}
+
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{url_for('logout')}}"><i
+                                                class="fi-rs-sign-out mr-10"></i>Logout</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="tab-content dashboard-content">
+                                <div class="tab-pane fade active show" id="dashboard" role="tabpanel"
+                                    aria-labelledby="dashboard-tab" style="width: 150%;">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Hello {{current_user.username}} </h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <p>From your account dashboard. you can easily check &amp; view your <a
+                                                    href="#">recent o rders</a>, manage your <a href="#">shipping and
+                                                    billing addresses</a> and <a href="#">edit your password and account
+                                                    details.</a></p>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="input-style mb-20">
+
+                                                <label>User Name: {{current_user.username}}</label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>First Name: {{account.first_name}}</label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>First Name: {{account.last_name}}</label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>Gender: {% if account.gender == '1' %}
+                                                    Male
+                                                    {% elif account.gender == '2' %}
+                                                    Female
+                                                    {% elif account.gender == '3' %}
+                                                    Others
+                                                    {% endif %} </label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>Credit points: {{account.credit_points}}</label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>Credit points userd: {{account.credit_points_used}}</label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>Level: {% if account.customer_level == 1 %} Standard Card {%elif
+                                                    account.customer_level == 2 %} Silver Card{%elif
+                                                    account.customer_level == 3 %} Gold Card {%endif%} </label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>Balance: {{account.user_balance}}</label>
+                                            </div>
+                                            <div class="input-style mb-20">
+                                                <label>Last modified time: {{account.modified_time.strftime('%d/%m/%Y
+                                                    %H:%M:%S')}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4>Credit Limited Changed History</h4>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col">Customer Id</th>
+                                                        <th scope="col">Customer Name</th>
+                                                        <th scope="col">Source</th>
+                                                        <th scope="col">Order No</th>
+                                                        <th scope="col">Credit Points</th>
+                                                        <th scope="col">Points Changed</th>
+                                                        <th scope="col">Reason</th>
+                                                        <th scope="col">Date</th>
+                                
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {%for item in items%}
+                                                    <tr>
+                                                        <td>{{item.user_id}}</td>
+                                                        <td><b>{{item.username}}</b></td>
+                                                        <td>{{item.source}}</td>
+                                                        <td>{% if item.refer_number == 0 %} System {%else%} {{item.refer_number}} {%endif%}</td>
+                                                        <td>{{item.credit_points}}</td>
+                                                        <td>{{item.change_point}}</td>
+                                                        <td>{{item.reason}}</td>
+                                                        <td>{{item.create_time}}</td>
+                                
+                                                    </tr>
+                                                    {%endfor%}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                                            <nav aria-label="Page navigation example">
+                                                <ul class="pagination justify-content-start">
+                                                    {% if pagination_log.page > 1 %}
+                                                    <li class="page-item"> <a
+                                                            href="{{url_for('frontend.page_account',page_log=pagination_log.page - 1) }}">Previous</a>
+                                                    </li>
+                                                    {% endif %}
+
+                                                    {% for page_num in range(1, pagination_log.num_pages + 1) %}
+                                                    <li class="page-item"> <a
+                                                            href="{{ url_for('frontend.page_account', page_log=page_num) }}">{{
+                                                            page_num }}</a>
+                                                    </li>
+                                                    {% endfor %}
+
+                                                    {% if pagination_log.page < pagination_log.num_pages %} <li
+                                                        class="page-item"> <a
+                                                            href="{{ url_for('frontend.page_account', page_log=pagination_log.page + 1) }}">Next</a>
+                                                        </li>
+                                                        {% endif %}
+
+
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+
+
+
+                                <div class="tab-pane fade" id="orders" role="tabpanel" aria-labelledby="orders-tab" style="width: 150%;">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Your Orders</h5>
+                                        </div>
+                                        <div>
+                                            <div class="table-responsive">
+                                                <table class="table" >
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Order</th>
+                                                            <th>Date</th>
+                                                            <th>Payment</th>
+                                                            <th>Status</th>
+                                                            <th>Total</th>
+                                                            <th>Actions</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {%for o in order_list%}
+                                                        <tr>
+                                                            <td>{{o.order_sn}}</td>
+                                                            <td>{{o.create_time.strftime('%d/%m/%Y %H:%M:%S')}}</td>
+                                                            <td>{%if o.payment_method == 1 %} Online Banking {%elif
+                                                                o.payment_method == 2 %} Balance {%endif%}</td>
+                                                            <td>{%if o.order_status == 1%} Unpaid
+                                                                {%elif o.order_status == 2%}Paid and order is Preparing
+                                                                {%elif o.order_status == 3%} Delivery
+                                                                {%elif o.order_status == 0%}Completed {%elif
+                                                                o.order_status == 4%} Canceled
+                                                                {%endif%}</td>
+                                                            <td>{{o.district_money}}</td>
+                                                            <td><a href="{{url_for('frontend.view_order',order_sn = o.order_sn)}}"
+                                                                    class="btn-small d-block">View</a>
+                                                            </td>
+                                                            <td>
+                                                                {%if o.order_status != 0%}
+                                                                <button type="button" class="btn  submit"
+                                                                    onclick="updateOrder('{{ o.order_sn }}')">Order
+                                                                    Received</button>
+                                                                {%endif%}
+                                                            </td>
+                                                        </tr>
+                                                        {%endfor%}
+
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination justify-content-start">
+                                                        {% if pagination.page > 1 %}
+                                                        <li class="page-item"> <a
+                                                                href="{{url_for('frontend.page_account',page=pagination.page - 1) }}">Previous</a>
+                                                        </li>
+                                                        {% endif %}
+
+                                                        {% for page_num in range(1, pagination.num_pages + 1) %}
+                                                        <li class="page-item"> <a
+                                                                href="{{ url_for('frontend.page_account', page=page_num) }}">{{
+                                                                page_num }}</a>
+                                                        </li>
+                                                        {% endfor %}
+
+                                                        {% if pagination.page < pagination.num_pages %} <li
+                                                            class="page-item"> <a
+                                                                href="{{ url_for('frontend.page_account', page=pagination.page + 1) }}">Next</a>
+                                                            </li>
+                                                            {% endif %}
+
+
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="product_refund" role="tabpanel" aria-labelledby="orders-tab" style="width: 150%;">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Your Orders</h5>
+                                        </div>
+                                        <div>
+                                            <div class="table-responsive">
+                                                <table class="table" >
+                                                    <thead>
+                                                        <tr>
+                                                          <th>ID</th>
+                                                          <th>Order SN</th>
+                                                          <th>Customer Name </th>
+                                                          <th>Product Name</th>
+                                                          <th>Price</th>
+                                                          <th>Size</th>
+                                                          <th>Color</th>
+                                                          <th>Return Quantity</th>
+                                                          <th>Reason</th>
+                                                          <th>Comment</th>
+                                                          <th>Status</th>
+                                                        </tr>
+                                                      </thead>
+                                                      <tbody>
+                                                        {% for app in refund_list %}
+                                                        <tr>
+                                                          <td>{{ app.id }}</td>
+                                                          <td>
+                                                            <a href="{{url_for('frontend.view_order',order_sn = app.order_sn)}}" target="_blank">
+                                                              {{ app.order_sn }}
+                                                            </a>
+                                                          <td>{{ app.username }}</td>
+                                                          <td>{{ app.product_name }}</td>
+                                                          <td>{{ app.product_price }}</td>
+                                                          <td>{{ app.size }}</td>
+                                                          <td>{{ app.color }}</td>
+                                                          <td>{{ app.qtn }}</td>
+                                                          <td>{{ app.reason }}</td>
+                                                          <td>{{ app.comment }}</td>
+                                                          <td>{% if app.status == 0 %} Not return {%elif app.status == 1 %} Approved {%elif app.status == 2 %}
+                                                            Rejected {%endif%} </td>
+                                                          
+                                                        </tr>
+                                                        {% endfor %}
+                                                      </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                                                <nav aria-label="Page navigation example">
+                                                    <ul class="pagination justify-content-start">
+                                                        {% if pagination.page > 1 %}
+                                                        <li class="page-item"> <a
+                                                                href="{{url_for('frontend.page_account',page=pagination.page - 1) }}">Previous</a>
+                                                        </li>
+                                                        {% endif %}
+
+                                                        {% for page_num in range(1, pagination.num_pages + 1) %}
+                                                        <li class="page-item"> <a
+                                                                href="{{ url_for('frontend.page_account', page=page_num) }}">{{
+                                                                page_num }}</a>
+                                                        </li>
+                                                        {% endfor %}
+
+                                                        {% if pagination.page < pagination.num_pages %} <li
+                                                            class="page-item"> <a
+                                                                href="{{ url_for('frontend.page_account', page=pagination.page + 1) }}">Next</a>
+                                                            </li>
+                                                            {% endif %}
+
+
+                                                    </ul>
+                                                </nav>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="track-orders" role="tabpanel"
+                                    aria-labelledby="track-orders-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5 class="mb-0">Orders tracking</h5>
+                                        </div>
+                                        <div class="card-body contact-from-area">
+                                            <p>To track your order please enter your OrderID in the box below and press
+                                                "Track" button.</p>
+                                            <div class="row">
+                                                <div class="col-lg-8">
+                                                    <form id="trackOrderForm" class="contact-form-style mt-30 mb-50"
+                                                        method="post">
+                                                        <div class="input-style mb-20">
+                                                            <label>Order ID</label>
+                                                            <input name="order-id" id="order_id"
+                                                                placeholder="Please enter your order id" type="text"
+                                                                class="square">
+                                                        </div>
+                                                        <div class="input-style mb-20">
+                                                            <label>Product Name</label>
+                                                            <input name="product_name" id="product_name"
+                                                                placeholder="Please enter product name" type="text"
+                                                                class="square">
+                                                        </div>
+                                                        <button class="submit submit-auto-width"
+                                                            type="submit">Track</button>
+                                                    </form>
+                                                </div>
+                                                <div class="table-responsive">
+                                                    <table class="table" style="width: auto;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Order</th>
+                                                                <th>Date</th>
+                                                                <th>Payment Methond</th>
+                                                                <th>Status</th>
+                                                                <th>Total</th>
+                                                                <th>Actions</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody id="orderList">
+
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                    <div class="row">
+                                        {% if address %}
+                                        {%for addr in address %}
+                                        <div class="col-lg-6">
+
+                                            <div class="card mb-3 mb-lg-0">
+
+
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Billing Address</h5>
+                                                </div>
+
+                                                <div class="card-body">
+                                                    <address>{{addr.zip}}<br> {{addr.street}},<br> {{addr.city}}
+                                                        <br>{{addr.region}}
+                                                    </address>
+                                                    <p>{{addr.country}}</p>
+                                                    <a href="{{url_for('frontend.update_customer_addr', id= addr.id)}}"
+                                                        class="btn-small">Edit</a>
+                                                    <a href="{{url_for('frontend.delete_customer_addr', id= addr.id)}}"
+                                                        class="btn-small">delete</a>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                        {%endfor%}
+                                        {% else %}
+                                        <p>No addresses found.</p>
+                                        {% endif %}
+                                        <div class="card-body">
+
+                                            <form id="address-form"
+                                                action="{{ url_for('frontend.insert_customer_addr') }}" method="post"
+                                                name="enqaddr">
+
+                                                <div class="row">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Zip <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="zip"
+                                                            type="text" pattern="[0-9]+">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Street <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="street"
+                                                            type="text">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>City <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="city"
+                                                            type="text">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Region <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="region">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Country <span class="required">*</span></label>
+                                                        <select class="form-control select-active" name="country"
+                                                            required>
+                                                            <option value="Australia">Australia</option>
+                                                            <option value="Canada">Canada</option>
+                                                            <option value="China">China</option>
+                                                            <option value="New Zealand">New Zealand</option>
+                                                            <option value="USA (US)">USA (US)</option>
+                                                            <option value="European Union">European Union</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-12">
+
+                                                    <button class="btn btn-fill-out submit" name="btnsubmit"
+                                                        onclick="validateAddress(event)">Save</button>
+
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="account-detail" role="tabpanel"
+                                    aria-labelledby="account-detail-tab">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h5>Account Details</h5>
+                                        </div>
+                                        <div class="card-body">
+
+                                            <form action="{{ url_for('frontend.update_customer_info') }}" method="post"
+                                                name="enq">
+                                                <div class="row">
+                                                    <div class="form-group col-md-6">
+                                                        <label>First Name <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="first_name"
+                                                            type="text" value="{{account.first_name}}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Last Name <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="last_name"
+                                                            type="text" value="{{account.last_name}}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Phone Number <span class="required">*</span></label>
+                                                        <input required="" class="form-control square"
+                                                            name="phone_number" value="{{account.phone_number}}"
+                                                            pattern="[0-9]+">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Gender <span class="required">*</span></label>
+                                                        <select id="gener" name="gender"
+                                                            style="border: 1px solid black;">
+                                                            <option value="1" {% if account.gender==1 %} selected {%
+                                                                endif %}>Male</option>
+                                                            <option value="2" {% if account.gender==2 %} selected {%
+                                                                endif %}>Female</option>
+                                                            <option value="3" {% if account.gender==3 %} selected {%
+                                                                endif %}>Unknown</option>
+                                                        </select>
+
+                                                    </div>
+                                                    <div class="form-group col-md-12">
+                                                        <label>Email Address <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="email"
+                                                            type="email" value="{{account.email}}" readonly="true">
+                                                    </div>
+                                                    <div class="col-md-12">
+                                                        <button type="submit" class="btn btn-fill-out submit"
+                                                            name="submit" value="Submit">Update</button>
+                                                    </div>
+                                            </form>
+
+                                        </div>
+                                        <br>
+
+                                        <div class="card-header">
+                                            <h5>Account Details</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <form action="{{ url_for('frontend.update_pwd') }}" method="post"
+                                                name="enq">
+                                                <div class="form-group col-md-12">
+                                                    <label>Current Password <span class="required">*</span></label>
+                                                    <input required="" class="form-control square" name="password"
+                                                        type="password">
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label>New Password <span class="required">*</span></label>
+                                                    <input required="" class="form-control square" name="npassword"
+                                                        type="password">
+                                                </div>
+                                                <div class="form-group col-md-12">
+                                                    <label>Confirm Password <span class="required">*</span></label>
+                                                    <input required="" class="form-control square" name="cpassword"
+                                                        type="password">
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-fill-out submit" name="submit"
+                                                        value="Submit">Update</button>
+                                                </div>
+                                            </form>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script>
+    function validateAddress(event) {
+
+        event.preventDefault();
+
+
+        // Get form inputs
+        var zip = $('input[name="zip"]').val();
+        var street = $('input[name="street"]').val();
+        var city = $('input[name="city"]').val();
+        var region = $('input[name="region"]').val();
+        var country = $('select[name="country"]').val();
+
+        // Construct address string
+        var address = street + '+' + city + '+' + region + '+' + zip + '+' + country;
+
+
+        // Call address validation API
+        $.ajax({
+            url: 'https://nominatim.openstreetmap.org/search',
+            type: 'GET',
+            data: {
+                q: address,
+                format: 'geojson',
+                addressdetails: 1
+            },
+            success: function (response) {
+
+
+               
+                if (response.features && response.features.length > 0) {
+                    // Address is valid, submit the form
+                    var addressForm = document.forms["enqaddr"]; // Get the form by its name
+                   
+                    addressForm.submit();
+
+                } else {
+                    // Address is invalid, show error message
+                    alert('Invalid address! Please enter a valid address.');
+                }
+            },
+            error: function () {
+                // Error handling
+                alert('An error occurred while validating the address.');
+            }
+        });
+    }
+</script>
+
+<script>
+    document.getElementById('trackOrderForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent form submission
+
+        var order_id = document.getElementById('order_id').value;
+        var product_name = document.getElementById('product_name').value;
+        if (order_id.trim() === '' && product_name.trim() === '') {
+            alert('Please enter at least Order ID or Product Name.');
+            return;
+        }
+
+        fetch('/frontend/track_order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ order_id: order_id, product_name: product_name })
+        })
+            .then(response => response.json())
+            .then(data => {
+                var orderList = document.getElementById('orderList');
+                orderList.innerHTML = '';
+
+                data.orders.forEach(order => {
+                    var row = document.createElement('tr');
+
+                    var orderSN = document.createElement('td');
+                    orderSN.textContent = order.order_sn;
+                    row.appendChild(orderSN);
+
+                    var createTime = document.createElement('td');
+                    createTime.textContent = new Date(order.create_time).toLocaleString();
+                    row.appendChild(createTime);
+
+                    var paymentMethod = document.createElement('td');
+                    var paymentMethodText = '';
+                    switch (order.payment_method) {
+                        case 0: paymentMethodText = 'Unpaid'; break;
+                        case 1: paymentMethodText = 'online bank'; break;
+                        case 2: paymentMethodText = 'balance'; break;
+                        case 3: paymentMethodText = 'credit_limited'; break;
+                        case 5: paymentMethodText = 'check'; break;
+                    }
+
+                    paymentMethod.textContent = paymentMethodText;
+                    row.appendChild(paymentMethod);
+
+                    var orderStatus = document.createElement('td');
+                    var statusText = '';
+                    switch (order.order_status) {
+                        case 1: statusText = 'Unpaid'; break;
+                        case 2: statusText = 'Paid and order is Preparing'; break;
+                        case 3: statusText = 'Delivery'; break;
+                        case 0: statusText = 'Completed'; break;
+                        case 4: statusText = 'Canceled'; break;
+                    }
+                    orderStatus.textContent = statusText;
+                    row.appendChild(orderStatus);
+
+                    var districtMoney = document.createElement('td');
+                    districtMoney.textContent = order.district_money;
+                    row.appendChild(districtMoney);
+
+                    var actions = document.createElement('td');
+                    var viewLink = document.createElement('a');
+                    viewLink.href = `/frontend/view_order_info/${order.order_sn}`;
+                    viewLink.className = 'btn-small d-block';
+                    viewLink.textContent = 'View';
+                    actions.appendChild(viewLink);
+                    row.appendChild(actions);
+
+                    orderList.appendChild(row);
+                });
+            });
+    });
+
+    function updateOrder(order_sn) {
+
+        $.ajax({
+            url: '/frontend/order_received',
+            type: 'POST',
+            contentType: 'application/json', // 指定请求内容类型为 JSON
+            data: JSON.stringify({
+                order_sn: order_sn
+            }),
+            success: function (response) {
+                alert('thank you for your support');
+                location.reload();
+            },
+            error: function (error) {
+                alert('Failed to update application');
+            }
+        });
+    }
+</script>
+{%endblock%}

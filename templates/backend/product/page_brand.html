@@ -1,0 +1,49 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Brand </h2>
+            <p>Brand and vendor management</p>
+        </div>
+        <div>
+            <a href="{{url_for('backend.insert_brand')}}" class="btn btn-primary"><i class="text-muted material-icons md-post_add"></i>Add New Brand</a>
+        </div>
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <div class="row gx-3">
+                <div class="col-lg-4 mb-lg-0 mb-15 me-auto">
+                    <input type="text" placeholder="Search..." class="form-control">
+                </div>
+               
+            </div>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row gx-3">
+                {%for b in brand_list%}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                    <figure class="card border-1">
+                        <div class="card-header bg-white text-center">
+                            <img height="76" src="{{b.brand_logo}}" class="img-fluid" alt="Logo">
+                        </div>
+                        <figcaption class="card-body text-center">
+                            <a href="{{url_for('backend.edit_brand',brand_id = b.brand_id)}}">  <h6 class="card-title m-0">{{b.brand_name}}</h6></a>
+                             {{b.product_count}} items 
+                        </figcaption>
+                    </figure>
+                </div> <!-- col.// -->
+                {%endfor%}
+            </div> <!-- row.// -->
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+</section> <!-- content-main end// -->
+
+
+{% endblock %}

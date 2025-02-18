@@ -1,0 +1,418 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum
+{% endblock %}
+
+
+{% block content %}
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> {{product.one_category}}
+                <span></span> {{product.two_category}}
+
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="product-detail accordion-detail">
+                        <div class="row mb-50">
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-gallery">
+                                    <span class="zoom-icon"><i class="fi-rs-search"></i></span>
+                                    <!-- MAIN SLIDES -->
+                                    <div class="product-image-slider">
+                                        {%for pic in pics%}
+                                        <figure class="border-radius-10">
+                                            <img class="default-img" src="{{pic.pic_url}}" alt="product image">
+                                        </figure>
+                                        {%endfor%}
+
+                                    </div>
+                                    <!-- THUMBNAILS -->
+                                    <div class="slider-nav-thumbnails pl-15 pr-15">
+                                        {%for pic in pics%}
+                                        <div>
+                                            <img src="{{pic.pic_url}}" alt="product image">
+                                        </div>
+                                        {%endfor%}
+
+                                    </div>
+                                </div>
+                                <!-- End Gallery -->
+                            </div>
+                            <div class="col-md-6 col-sm-12 col-xs-12">
+                                <div class="detail-info">
+                                    <h2 class="title-detail">{{product.product_name}}</h2>
+                                    <div class="product-detail-rating">
+                                        <div class="pro-details-brand">
+                                            <span> Brands: {{product.brand}}</span>
+                                        </div>
+                                        <div class="product-rate-cover text-end">
+
+                                            <div class="product-rate d-inline-block">
+
+                                                <div class="product-rating" style="width:{{ rate.a_rate/5 *100}}%">
+                                                </div>
+
+                                            </div>
+                                            <span class="font-small ml-5 text-muted"> ({{ rate.count}} reviews)</span>
+
+
+                                        </div>
+                                    </div>
+                                    <div class="clearfix product-price-cover">
+                                        <div class="product-price primary-color float-left">
+
+                                            {%if (product.price - product.discount) == product.price%}
+                                            <ins><span class="text-brand">${{product.price }}</span></ins>
+                                            {%else%}
+                                            <ins><span class="text-brand">${{product.price -
+                                                    product.discount}}</span></ins>
+                                            <ins><span class="old-price font-md ml-15">${{product.price}}</span></ins>
+                                            <span class="save-price  font-md color3 ml-15">{{(product.discount /
+                                                product.price) * 100}} %Off</span>
+                                            {%endif%}
+
+                                        </div>
+                                    </div>
+                                    <div class="bt-1 border-color-1 mt-15 mb-15"></div>
+                                    <div class="short-desc mb-30">
+                                        <p>Our Policy</p>
+                                    </div>
+                                    <div class="product_sort_info font-xs mb-30">
+                                        <ul>
+                                            <li class="mb-10"><i class="fi-rs-crown mr-5"></i> 1 Year AL Jazeera Brand
+                                                Warranty</li>
+                                            <li class="mb-10"><i class="fi-rs-refresh mr-5"></i> 30 Day Return Policy
+                                            </li>
+                                            <li><i class="fi-rs-credit-card mr-5"></i> Cash on Delivery available</li>
+                                        </ul>
+                                    </div>
+                                    <form action="{{url_for('frontend.insert_cart')}}" method="post">
+                                        <div class="attr-detail attr-color mb-15">
+                                            <strong class="mr-10">Color</strong>
+                                            <ul class="list-filter color-filter">
+
+                                                <Select name="color" id="color" required>
+                                                    {%for color in color_list%}
+                                                    <option value="{{color.color_name}}">{{color.color_name}}</option>
+                                                    {%endfor%}
+                                                </Select>
+
+
+
+                                            </ul>
+                                        </div>
+                                        <div class="attr-detail attr-size">
+                                            <strong class="mr-10">Size</strong>
+                                            <ul class="list-filter size-filter font-small">
+                                                <select id="size" name="size" required>
+
+                                                    <!-- 尺码选项将通过 JavaScript 动态更新 -->
+                                                </select>
+                                            </ul>
+                                        </div>
+                                        <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                        <div class="detail-extralink">
+
+                                            <div class="detail-qty border radius">
+
+                                                <input name="product_id" id="product_id" value="{{product.product_id}}"
+                                                    hidden="true">
+
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <input class="qty-val" name="qtn" value="1">
+                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                            <div class="product-extra-link2">
+                                                <button type="submit" class="button button-add-to-cart"
+                                                    id="saveButton">Add to cart</button>
+                                                <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                                    href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                                <a aria-label="Compare" class="action-btn hover-up"
+                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                            </div>
+
+                                        </div>
+                                    </form>
+                                </div>
+                                <!-- Detail Info -->
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-10 m-auto entry-main-content">
+                                <h2 class="section-title style-1 mb-30">Description</h2>
+                                <div class="description mb-50">
+                                    {{product.descript}}
+                                </div>
+                                <div>
+                                    <img src="/static/frontend/imgs/product/men_size.png">
+
+                                </div>
+                                <div>
+                                    <img src="/static/frontend/imgs/product/women_size.png">
+
+                                </div>
+                                <div>
+                                    {%for pic in pics%}
+                                    <div>
+                                        <img src="{{pic.pic_url}}" alt="product image">
+                                    </div>>
+                                    {%endfor%}
+
+                                </div>
+                                <h3 class="section-title style-1 mb-30">Additional info</h3>
+                                <table class="font-md mb-30">
+                                    <tbody>
+                                        <tr class="stand-up">
+                                            <th>Weight</th>
+                                            <td>
+                                                <p>{{product.weight}}</p>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+
+
+                                <!--Comments-->
+                                <div class="comments-area style-2">
+                                    <div class="row">
+                                        <div class="col-lg-8">
+                                            <h4 class="mb-30">Customer Comment </h4>
+                                            {%if comment%}
+                                            <div class="comment-list">
+                                                {%for c in comment%}
+                                                <div class="single-comment justify-content-between d-flex">
+                                                    <div class="user justify-content-between d-flex">
+                                                        <div class="thumb text-center">
+                                                            <img src="assets/imgs/page/avatar-6.jpg" alt="">
+                                                            <h6><a href="#">{{c.username}}</a></h6>
+
+                                                        </div>
+                                                        <div class="desc">
+                                                            <div class="product-rate d-inline-block">
+                                                                <div class="product-rating"
+                                                                    style="width:{{c.rate/5 * 100}}%">
+                                                                </div>
+                                                            </div>
+                                                            <p>{{c.content}}</p>
+                                                            <div class="d-flex justify-content-between">
+                                                                <div class="d-flex align-items-center">
+                                                                    <p class="font-xs mr-30">
+                                                                        {{c.audit_time.strftime('%d/%m/%Y
+                                                                        %H:%M:%S')}}
+                                                                    </p>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {%endfor%}
+                                            </div>
+                                            {%else%}
+                                            <div class="comment-list">
+                                                <p> No Comment</p>
+                                            </div>
+                                            {%endif%}
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!--comment form-->
+
+                            </div>
+                        </div>
+                        <div class="row mt-60">
+                            <div class="col-12">
+                                <h3 class="section-title style-1 mb-30">Related products</h3>
+                            </div>
+                            <div class="col-12">
+                                <div class="row related-products">
+                                    {%for p in related_list%}
+                                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
+                                        <div class="product-cart-wrap small hover-up">
+                                            <div class="product-img-action-wrap">
+                                                <div class="product-img product-img-zoom">
+                                                    <a href="shop-product-right.html" tabindex="0">
+                                                        <img class="default-img" src="assets/imgs/shop/product-2-1.jpg"
+                                                            alt="">
+                                                        <img class="hover-img" src="assets/imgs/shop/product-2-2.jpg"
+                                                            alt="">
+                                                    </a>
+                                                </div>
+                                                <div class="product-action-1">
+                                                    <a aria-label="Quick view" class="action-btn small hover-up"
+                                                        data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
+                                                            class="fi-rs-search"></i></a>
+                                                    <a aria-label="Add To Wishlist" class="action-btn small hover-up"
+                                                        href="shop-wishlist.html" tabindex="0"><i
+                                                            class="fi-rs-heart"></i></a>
+                                                    <a aria-label="Compare" class="action-btn small hover-up"
+                                                        href="shop-compare.html" tabindex="0"><i
+                                                            class="fi-rs-shuffle"></i></a>
+                                                </div>
+                                                <div class="product-badges product-badges-position product-badges-mrg">
+                                                    <span class="hot">Hot</span>
+                                                </div>
+                                            </div>
+                                            <div class="product-content-wrap">
+                                                <h2><a href="shop-product-right.html" tabindex="0">Ulstra Bass
+                                                        Headphone</a></h2>
+                                                <div class="rating-result" title="90%">
+                                                    <span>
+                                                    </span>
+                                                </div>
+                                                <div class="product-price">
+                                                    <span>$238.85 </span>
+                                                    <span class="old-price">$245.8</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {%endfor%}
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    // 当用户选择颜色时，通过 AJAX 请求获取相应颜色的尺码选项
+    document.addEventListener('DOMContentLoaded', function () {
+
+
+        document.getElementById('color').addEventListener('change', function () {
+
+            var selectedColor = this.value;
+            var productId = document.getElementById('product_id').value;
+            // 获取 product_id 控件的值
+            // 向后端发送 AJAX 请求获取相应颜色的尺码选项
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+
+                    var sizes = JSON.parse(xhr.responseText);
+                    updateSizeOptions(sizes);
+                }
+            };
+            xhr.open('GET', '/frontend/get_stock?color=' + encodeURIComponent(selectedColor) + '&product_id=' + encodeURIComponent(productId), true);
+            xhr.send();
+        });
+
+    });
+    // 更新尺码下拉菜单中的选项
+    function updateSizeOptions(sizes) {
+        var sizeSelect = document.getElementById('size');
+        sizeSelect.innerHTML = ''; // Clear the current options
+
+        for (var i = 0; i < sizes.length; i++) {
+            var option = document.createElement('option');
+            option.value = sizes[i].size + ':' + sizes[i].current_cnt; // Set the size as the option's value
+            option.textContent = sizes[i].size + ': ' + sizes[i].current_cnt; // Set the text content of the option, including size and stock count
+            sizeSelect.appendChild(option); // Append the option to the size select
+        }
+
+        sizeSelect.addEventListener('change', function () {
+            var sizeValue = parseInt(sizeSelect.value.split(':')[0].trim());
+            if (sizeValue <= 0) {
+                saveButton.disabled = true;
+                saveButton.classList.add('disabled');
+            } else {
+                saveButton.disabled = false;
+                saveButton.classList.remove('disabled');
+            }
+        });
+
+        // 触发一次 change 事件以确保初始状态
+        sizeSelect.dispatchEvent(new Event('change'));
+
+    };
+
+
+    // 获取数量输入框和上下箭头的元素
+    const qtyInput = document.querySelector('.qty-val');
+    const qtyUp = document.querySelector('.qty-up');
+    const qtyDown = document.querySelector('.qty-down');
+
+    qtyUp.addEventListener('click', () => {
+        // 获取尺码选择框
+        var sizeSelect = document.getElementById('size');
+        // 获取当前选择的尺码和库存数量
+
+        var selectedOption = sizeSelect.options[sizeSelect.selectedIndex].value;
+        var [size, maxQty] = selectedOption.split(':');
+
+        // 增加数量，但不能超过库存数量
+        if (parseInt(qtyInput.value) < parseInt(maxQty)) {
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        }
+    });
+
+    qtyDown.addEventListener('click', () => {
+        // 减少数量，但不能小于 1
+        if (parseInt(qtyInput.value) > 1) {
+            qtyInput.value = parseInt(qtyInput.value) - 1;
+        }
+    });
+
+
+    // 获取 Size 下拉框和 Save 按钮的元素
+    const sizeSelect = document.getElementById('size');
+    const saveButton = document.getElementById('saveButton');
+
+    // 添加事件监听器，当 Size 下拉框的值发生变化时执行
+    sizeSelect.addEventListener('change', () => {
+        // 获取选定的尺码的值
+        var productId = document.getElementById('product_id').value;
+
+        // 分割尺码值、产品ID 和颜色
+        var color = document.getElementById('color').value;
+        var size_value = document.getElementById('size').value;
+        size_value = size_value.split(':')[0].trim()
+        // 使用 AJAX 向后端发送请求
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                const response = JSON.parse(xhr.responseText);
+
+                const cnt = response.cnt;
+                // 如果库存数量为 0，则禁用 Save 按钮
+                if (parseInt(cnt) <= 0) {
+                    alert('out of stock')
+                    saveButton.disabled = true; // 禁用 Save 按钮
+                    saveButton.classList.add('disabled'); // 添加 CSS 类来改变按钮样式
+                } else {
+                    saveButton.disabled = false; // 否则启用 Save 按钮
+                    saveButton.classList.remove('disabled'); // 移除禁用样式
+                }
+            }
+        };
+        const url = '/frontend/get_size_stock?' +
+            'size=' + encodeURIComponent(size_value) +
+            '&product_id=' + encodeURIComponent(productId) +
+            '&color=' + encodeURIComponent(color);
+
+        xhr.open('GET', url, true);
+        xhr.send();
+    });
+
+</script>
+
+{% endblock %}

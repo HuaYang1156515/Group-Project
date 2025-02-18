@@ -1,0 +1,235 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum
+{% endblock %}
+
+
+{% block content %}
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> Your Cart
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table shopping-summery text-center clean">
+                            <thead>
+                                <tr class="main-heading">
+
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Image</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Color</th>
+                                    <th scope="col">Size</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Subtotal</th>
+                                    <th scope="col">Remove</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <form id="myForm" action="{{url_for('frontend.update_cart')}}" method="post">
+                                    {%for p in cart_list%}
+                                    <tr>
+                                        <td><input type="checkbox" class="checkbox" name="selected_cart_ids"
+                                                value="{{ p.cart_id }}"></td>
+                                        <td class="image product-thumbnail">
+                                            <img src="{{p.pic_url}}" alt="#">
+                                        </td>
+                                        <td class="product-des product-name">
+                                            <h5 class="product-name"><a
+                                                    href="{{url_for('frontend.view_product',product_id = p.product_id)}}">{{p.product_name}}</a>
+                                            </h5>
+                                            <input name="cart_id" value="{{p.cart_id}}" hidden="true">
+                                        </td>
+                                        <td class="product-des product-name">{{p.color}}</td>
+                                        <td class="product-des product-size">{{p.size}}</td>
+                                        <td class="price" data-title="Price"><span>{{p.price - p.discount}} </span></td>
+                                        <td class="text-center" data-title="Stock">
+                                            <div class="detail-qty border radius  m-auto">
+                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
+                                                <input class="qty-val" name="qtn" value="{{p.product_amount}}">
+                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+                                            </div>
+                                        </td>
+
+                                        <td data-title="Cart" class="total-price">
+                                            <span id="totalPriceSpan">${{(p.price - p.discount) * p.product_amount}}
+                                            </span>
+                                        </td>
+                                        <td class="action" data-title="Remove"><a
+                                                href="{{url_for('frontend.delete_cart',cart_id = p.cart_id)}}"
+                                                class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                    </tr>
+                                    {%endfor%}
+                                </form>
+                                <tr>
+                                    <td colspan="9" class="text-end">
+                                        <a href="{{url_for('frontend.delete_cart',cart_id = 0)}}" class="text-muted"> <i
+                                                class="fi-rs-cross-small"></i> Clear Cart</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="cart-action text-end">
+
+                        <a href="{{url_for('frontend.dashboard')}}" class="btn "><i
+                                class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
+                    </div>
+                    <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
+                    <div class="row mb-50">
+                        <div class="col-lg-6 col-md-12">
+                            <div class="heading_s1 mb-3">
+                                <h4>Our Promotion</h4>
+                            </div>
+                            <p class="mt-15 mb-30">Buy Two Get One Free</p>
+                           
+                        </div>
+                        <div class="col-lg-6 col-md-12">
+                            <div class="border p-md-4 p-30 border-radius cart-totals">
+                                <div class="heading_s1 mb-3">
+                                    <h4>Cart Totals</h4>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td class="cart_total_label">Cart Subtotal</td>
+                                                <td class="cart_total_amount"><span id="Cart Subtotal"
+                                                        class="font-lg fw-900 text-brand"></span></td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <button id="submitButton" type="submit" class="btn btn-fill-out btn-block hover-up"
+                                    name="login">Proceed To CheckOut</button>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<script>
+    // 获取数量输入框和上下箭头的元素
+    const qtyInputs = document.querySelectorAll('.qty-val');
+    const qtyUps = document.querySelectorAll('.qty-up');
+    const qtyDowns = document.querySelectorAll('.qty-down');
+    
+    const totalPriceSpans = document.querySelectorAll('.total-price');
+    const cartSubtotalSpan = document.getElementById('Cart Subtotal');
+    // 定义一个函数来更新显示总价的 span 元素的内容
+    function updateTotalPrice() {
+        let cartSubtotal = 0;
+        totalPriceSpans.forEach((span, index) => {
+            const discount = parseFloat(span.closest('tr').querySelector('.price').textContent); // 获取折扣价
+
+            const quantity = parseInt(qtyInputs[index].value); // 获取数量
+
+            const totalPrice = discount * quantity; // 计算总价
+            span.textContent = '$' + totalPrice; // 更新显示总价的 span 元素的内容
+            cartSubtotal += totalPrice; // 累加到购物车总价中
+        });
+        cartSubtotalSpan.textContent = '$' + cartSubtotal;
+    }
+
+
+
+    // 为上下箭头添加点击事件监听器
+    qtyUps.forEach((qtyUp, index) => {
+    qtyUp.addEventListener('click', () => {
+
+        const row = qtyUp.closest('tr');
+        const checkbox = row.querySelector('.checkbox');
+        const cartId = checkbox.value;
+        
+        // 获取当前行的尺码值
+ 
+        // 提取尺码值
+       
+        $.ajax({
+                url: '/frontend/check_stock',  
+                type: 'POST',
+                data: { cart_id: cartId },
+                success: (response) => {
+                    const stock = response.stock;  // 假设返回的数据包含库存信息
+                    
+                    if (parseInt(qtyInputs[index].value) < parseInt(stock)) {
+                        qtyInputs[index].value = parseInt(qtyInputs[index].value) + 1;
+                        updateTotalPrice(); // 更新显示总价
+                    } 
+                    else {
+                        alert(`The size you choosed is out of stock.`);
+                    }
+                },
+                error: (xhr, status, error) => {
+                    console.error(`Error checking stock for cart ID ${cartId}:`, error);
+                }
+            });
+        });
+    });
+
+
+    qtyDowns.forEach((qtyDown, index) => {
+        qtyDown.addEventListener('click', () => {
+            // 减少数量，但不能小于 1
+            if (parseInt(qtyInputs[index].value) > 1) {
+                qtyInputs[index].value = parseInt(qtyInputs[index].value) - 1;
+                updateTotalPrice(); // 更新显示总价
+            }
+        });
+    });
+
+    // 页面加载时初始化显示总价
+    updateTotalPrice();
+
+
+    document.getElementById("submitButton").addEventListener("click", function () {
+        document.getElementById("myForm").submit();
+    });
+
+
+    // update selected status
+    document.addEventListener("DOMContentLoaded", function () {
+        // 获取所有的复选框
+        var checkboxes = document.querySelectorAll(".checkbox");
+        checkboxes.forEach(function (checkbox) {
+            checkbox.addEventListener("change", function () {
+                var cartId = this.value; // 获取当前勾选框的 cart_id
+                var isChecked = this.checked; // 获取当前勾选框的状态
+
+                // 发送 AJAX 请求到后端
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/frontend/update_select", true);
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            // 请求成功
+                            console.log("Update success");
+                        } else {
+                            // 请求失败
+                            console.error("Update failed");
+                        }
+                    }
+                };
+                xhr.send(JSON.stringify({ cart_id: cartId, is_checked: isChecked }));
+            });
+        });
+    });
+</script>
+{% endblock %}

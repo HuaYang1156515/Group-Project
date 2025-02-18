@@ -1,0 +1,158 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Account
+{% endblock %}
+
+
+{% block content %}
+
+
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> Shop
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row flex-row-reverse">
+                <div class="col-lg-9">
+
+                    <div class="row product-grid-3">
+                        {%for product in product_list%}
+                        <div class="col-lg-4 col-md-4 col-12 col-sm-6">
+                            <div class="product-cart-wrap mb-30">
+                                <div class="product-img-action-wrap">
+                                    <div class="product-img product-img-zoom">
+                                        <a href="{{url_for('frontend.view_product',product_id = product.product_id)}}">
+                                            <img class="default-img" src="{{product.pic_url}}" alt="">
+                                            <img class="hover-img" src="a{{product.pic_url}}" alt="">
+                                        </a>
+                                    </div>
+
+                                    <div class="product-badges product-badges-position product-badges-mrg">
+                                        <span class="hot">{{product.feature}}</span>
+                                    </div>
+                                </div>
+                                <div class="product-content-wrap">
+
+                                    <h2><a
+                                            href="{{url_for('frontend.view_product',product_id = product.product_id)}}">{{product.product_name}}</a>
+                                    </h2>
+                                    <div class="pro-details-brand">
+                                        <span> Brand: {{product.brand_name}}</span>
+                                    </div>
+                                    <div class="rating-result" title="90%">
+                                        <span>
+                                            {%if product.discount != product.price%}
+                                            <span>{{(product.discount / product.price) * 100}} %Off</span>
+                                            {%endif%}
+                                        </span>
+                                    </div>
+                                    <div class="product-price">
+                                        {%if product.discount == product.price%}
+                                        <span>${{product.price}}</span>
+                                        {%else%}
+                                        <span>${{product.discount}}</span>
+                                        <span class="old-price">${{product.price}}</span>
+                                        {%endif%}
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        {%endfor%}
+                    </div>
+                    <!--pagination-->
+                    <div class="pagination-area mt-15 mb-sm-5 mb-lg-0">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-start">
+                                {% if pagination.page > 1 %}
+                                <li class="page-item"> <a
+                                        href="{{url_for('frontend.view_categories', cate_id=session['cate_id'], t_cate_id = session['t_cate_id'],page=pagination.page - 1) }}">Previous</a>
+                                </li>
+                                {% endif %}
+
+                                {% for page_num in range(1, pagination.num_pages + 1) %}
+                                <li class="page-item"> <a
+                                        href="{{ url_for('frontend.view_categories', cate_id=session['cate_id'], t_cate_id = session['t_cate_id'], page=page_num) }}">{{
+                                        page_num }}</a>
+                                </li>
+                                {% endfor %}
+
+                                {% if pagination.page < pagination.num_pages %} <li class="page-item"> <a
+                                        href="{{ url_for('frontend.view_categories', cate_id=session['cate_id'], t_cate_id = session['t_cate_id'], page=pagination.page + 1) }}">Next</a>
+                                    </li>
+                                    {% endif %}
+
+
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div class="col-lg-3 primary-sidebar sticky-sidebar">
+                    <div class="widget-category mb-30">
+                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">Category</h5>
+                        <ul class="categories">
+                            <li><a href="{{ url_for('frontend.view_categories', cate_id=0, t_cate_id=0) }}">All
+                                    Categories</a></li>
+                            {% for c in categories %}
+                            <li>
+                                <a href="javascript:void(0);" class="cate1_link" data-cate-id="{{ c.cate_id }}">{{
+                                    c.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="widget-category mb-30">
+                        <h5 class="section-title style-1 mb-30 wow fadeIn animated">Type</h5>
+                        <ul class="categories" id="t_categories">
+                            <!-- t_categories will be loaded here dynamically -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</main>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        console.log("Document is ready");
+
+        const baseUrl = "{{ url_for('frontend.view_categories', cate_id=0, t_cate_id=0) }}".replace('/0/0', '');
+
+        $('.cate1_link').click(function () {
+
+            var cate_id = $(this).data('cate-id');
+
+
+            $.ajax({
+                url: "{{ url_for('frontend.get_t_categories') }}",
+                type: 'GET',
+                data: { cate_id: cate_id },
+                success: function (response) {
+                    console.log("AJAX request successful", response);
+                    var tCategories = response.t_categories;
+                    var tCategoriesHtml = '';
+                    tCategories.forEach(function (category) {
+                        var viewCategoriesUrl = baseUrl + '/' + cate_id + '/' + category.cate_id;
+                        tCategoriesHtml += '<li><a href="' + viewCategoriesUrl + '" class="cate2_link">' + category.name + '</a></li>';
+                    });
+                    $('#t_categories').html(tCategoriesHtml);
+                },
+                error: function (error) {
+                    console.log("AJAX request failed", error);
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}

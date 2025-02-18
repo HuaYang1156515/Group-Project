@@ -1,0 +1,42 @@
+{% extends "backend/base.html" %}
+{% block title %}
+Belmont Station Merino & Possum - Publish News
+{% endblock %}
+
+{% block content %}
+
+<section class="content-main">
+  <div class="row justify-content-center">
+      <div class="col-md-8">
+        <h1 class="mb-4 text-center" style="padding-top: 30px;">News List</h1>
+          <div class="list-group">
+              {% for news in news_list %}
+                  <a href="#" class="list-group-item list-group-item-action">
+                      <h5 class="mb-1">{{ news.title }}</h5>
+                      <p class="mb-1">{{ news.content }}</p>
+                      <small>
+                          <strong>ID:</strong> {{ news.news_id }}<br>
+                          <strong>Author:</strong> {{ news.author }}<br>
+                          <strong>Date:</strong> {{ news.date }}
+                      </small>
+                      <div class="mt-3">
+                          <form action="{{ url_for('backend.push_to_homepage', news_id=news.news_id) }}" method="post" style="display:inline;">
+                              <button type="submit" class="btn btn-primary btn-sm">Push to Homepage</button>
+                          </form>
+                          
+                          <form action="{{ url_for('backend.delete_news', news_id=news.news_id) }}" method="post" style="display:inline;">
+                              <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                          </form>
+                      </div>
+                  </a>
+              {% else %}
+                  <p class="text-center">No news available.</p>
+              {% endfor %}
+          </div>
+      </div>
+  </div>
+</section>
+
+
+
+{% endblock %}

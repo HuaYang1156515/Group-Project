@@ -1,0 +1,159 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title"> Set Products Discount</h2>
+
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <form action="{{url_for('backend.prom_view_category')}}" method="post">
+            <header class="card-header">
+                <div class="row align-items-center">
+
+
+
+
+                    <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                        <select class="form-select" name="f_category">
+
+                            <option value="0">All First category</option>
+                            {%for ca in one_category_list%}
+                            <option value="{{ca.cate_id}}"> {{ca.name}}</option>
+                            {%endfor%}
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <select class="form-select" name="s_category">
+
+                            <option value="0">All Second category</option>
+                            {%for ca in two_category_list%}
+                            <option value="{{ca.cate_id}}"> {{ca.name}}</option>
+                            {%endfor%}
+                        </select>
+                    </div>
+                    <div class="col-md-2 col-6">
+                        <button class="btn btn-md rounded font-sm hover-up" type="submit">Search</button>
+                    </div>
+
+
+
+                </div>
+            </header>
+        </form> <!-- card-header end// -->
+        <div class="card-body">
+            <form action="{{url_for('backend.set_prom_price')}}" method="post">
+                <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+
+
+                    <select class="form-select" name="discount" required>
+                        <option value="1|0">All Discuout</option>
+                        {%for d in discount %}
+                        <option value="{{d.value}}|{{d.promotion_id}}"> {{d.promotion_name}} - {{d.value}}</option>
+                        {%endfor%}
+                    </select>
+
+                </div>
+                <article class="itemlist">
+                    {%for item in items%}
+                    <div class="row align-items-center">
+                        <div class="col col-check flex-grow-0">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="selected_cart_ids"
+                                    value="{{ item.product_id }}">
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-sm-4  flex-grow-1 col-name">
+                            <a class="itemside" href="#">
+                                <div class="left">
+                                    <img src="{{item.pic_url}}" class="img-sm img-thumbnail" alt="Item">
+                                </div>
+                                <div class="info">
+                                    <h6 class="mb-0"><a href="{{url_for('frontend.view_product',product_id = item.product_id)}}" target="_blank">{{item.product_name}}</a></h6>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price"> <span>Price: {{item.price}}</span> | <span>
+                                Discount:
+                                {{item.discount_amount}}</span>
+
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price">
+                            <span>Sell Price: {{item.price - item.discount_amount }}</span>
+                        </div>
+                        <div class="col-lg-2 col-sm-2 col-4 col-price">
+                            <span>Rate: {{item.discount_amount / item.price * 100}} % off</span>
+                        </div>
+
+                    </div> <!-- row .// -->
+                    {%endfor%}
+
+                    <div class="col col-check flex-grow-0">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="select_all">
+                            <label class="form-check-label" for="select_all">全选</label>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-md rounded font-sm hover-up" type="submit">Apply</button>
+                    </div>
+
+                </article> <!-- itemlist  .// -->
+            </form>
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+    <div class="pagination-area mt-30 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+
+                {% if pagination.page > 1 %}
+                <li class="page-item"> <a
+                        href="{{ url_for('backend.product_list', page=pagination.page - 1) }}">Previous</a></li>
+                {% endif %}
+
+                {% for page_num in range(1, pagination.num_pages + 1) %}
+                <li class="page-item"> <a href="{{ url_for('backend.product_list', page=page_num) }}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.num_pages %} <li class="page-item"> <a
+                        href="{{ url_for('backend.product_list', page=pagination.page + 1) }}">Next</a></li>
+                    {% endif %}
+
+
+            </ul>
+        </nav>
+    </div>
+</section> <!-- content-main end// -->
+<script>
+    // 全选复选框的逻辑
+    document.getElementById('select_all').addEventListener('change', function () {
+        var checkboxes = document.querySelectorAll('input[name="selected_cart_ids"]');
+        checkboxes.forEach(function (checkbox) {
+            checkbox.checked = this.checked;
+        }.bind(this));
+    });
+
+    // 提交按钮的逻辑
+    document.querySelector('form').addEventListener('submit', function (event) {
+        var selectedProductIds = [];
+        var checkboxes = document.querySelectorAll('input[name="selected_cart_ids"]:checked');
+        checkboxes.forEach(function (checkbox) {
+            selectedProductIds.push(checkbox.value);
+        });
+
+        // 这里你可以添加其他逻辑，比如检查是否有选中的项
+        if (selectedProductIds.length === 0) {
+            event.preventDefault(); // 阻止表单提交
+            alert('请至少选择一项！');
+        }
+    });
+</script>
+{% endblock %}

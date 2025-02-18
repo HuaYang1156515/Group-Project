@@ -1,0 +1,115 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Account
+{% endblock %}
+
+
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> Pages
+                <span></span> Account
+            </div>
+        </div>
+    </div>
+    <section class="pt-150 pb-150">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-10 m-auto">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="dashboard-menu">
+                                <ul class="nav flex-column" role="tablist">
+                                    
+                                   
+                                    
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="address-tab" data-bs-toggle="tab" href="#address"
+                                            role="tab" aria-controls="address" aria-selected="true"><i
+                                                class="fi-rs-marker mr-10"></i>My Address</a>
+                                    </li>                    
+                                   
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="tab-content dashboard-content">
+                                <div class="tab-pane fade active show" id="address" role="tabpanel" aria-labelledby="address-tab">
+                                    <div class="row">
+
+                                        <div class="col-lg-6">
+                                            <div class="card mb-3 mb-lg-0">
+                                                <div class="card-header">
+                                                    <h5 class="mb-0">Billing Address</h5>
+                                                </div>
+                                              
+                                             
+                                        </div>
+
+                                        <div class="card-body">
+                                            <form action="{{ url_for('frontend.update_customer_addr') }}" method="post"
+                                                name="enq">
+                                                <div class="row">
+                                                    <div class="form-group col-md-6">
+                                                        <label>Zip <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="zip"
+                                                            type="text" pattern="[0-9]+" value="{{addr.zip}}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>Street <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="street"
+                                                            type="text" value="{{addr.street}}">
+                                                    </div>
+                                                    <div class="form-group col-md-6">
+                                                        <label>City <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="city"
+                                                            type="text" value="{{addr.city}}">
+                                                    </div>
+                                                    <div class=" form-group col-md-6">
+                                                        <label>Region <span class="required">*</span></label>
+                                                        <input required="" class="form-control square" name="region" value="{{addr.region}}">
+                                                    </div>
+                                                    <div class=" form-group col-md-6">
+                                                        <label>Country <span class="required">*</span></label>
+                                                        <select class="form-control select-active" name="country"
+                                                            required>
+                                                            <option value="">Choose a option...</option>
+                                                            <option value="Australia">Australia</option>
+                                                            <option value="Canada">Canada</option>
+                                                            <option value="China">China</option>
+                                                            <option value="New Zealand">New Zealand</option>
+                                                            <option value="USA (US)">USA (US)</option>
+                                                            <option value="European Union(EU)">European Union</option>
+
+                                                        </select>
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <button type="submit" class="btn btn-fill-out submit" name="submit"
+                                                        value="Submit">Save</button>
+                                                </div>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </section>
+</main>
+{%endblock%}

@@ -1,0 +1,251 @@
+{% extends "backend/base.html" %}
+{% block title %}
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+
+  <div class="content-header">
+
+    <div>
+      <h2 class="content-title card-title">Corporate Clients Applications</h2>
+    </div>
+
+    <div>
+
+      <input type="text" placeholder="Search by name" class="form-control bg-white">
+
+    </div>
+
+  </div>
+
+  <div class="card mb-4">
+
+    <header class="card-header">
+
+      <div class="row gx-3">
+
+        <div class="col-lg-4 col-md-6 me-auto">
+
+          <input type="text" placeholder="Search..." class="form-control" />
+
+        </div>
+
+        <div class="col-lg-2 col-md-3 col-6">
+
+          <select class="form-select">
+            <option>Status</option>
+            <option>Approved</option>
+            <option>Rejected</option>
+            <option>Put On Hold</option>
+            <option>Show all</option>
+          </select>
+
+        </div>
+      </div>
+    </header>
+    <!-- card-header end// -->
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Corporate Client Name</th>
+              <th> Contact Name </th>
+              <th>Application Subject</th>
+              <th>Submit Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in app_list %}
+            <tr>
+              <td>{{ app.app_id }}</td>
+              <td>
+                <a href="{{url_for('backend.edit_b_account',user_id = app.user_id)}}" target="_blank">
+                  {{ app.company_name }}
+                </a>
+              <td>{{ app.contact_name }}</td>
+              <td>{{ app.app_name }}</td>
+              <td>{{ app.submit_date }}</td>
+              <td>
+                {% if app.status == 0 %}
+                Put On Hold
+                {% elif app.status == 1 %}
+                Approved
+                {% elif app.status == 2 %}
+                Rejected
+                {% endif %}
+              </td>
+              <td><a href="#"  class="enterprise-link" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                data-application-id="{{ app.app_id }}">View</a></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+
+
+        </table>
+
+      </div> <!-- table-responsive//end -->
+
+    </div>
+
+    <!-- card-body end// -->
+
+  </div>
+
+  <div class="pagination-area mt-30 mb-50">
+
+    <nav aria-label="Page navigation example">
+
+      <ul class="pagination justify-content-start">
+
+        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+
+        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+
+      </ul>
+
+    </nav>
+
+  </div>
+
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Application Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="applicationId" class="form-label">Application ID:</label>
+            <input type="text" class="form-control" id="applicationId" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="enterpriseNumber" class="form-label">Enterprise Number:</label>
+            <input type="text" class="form-control" id="enterpriseNumber" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="enterpriseNumber" class="form-label">Corporate Number:</label>
+            <input type="text" class="form-control" id="companyname" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="applicationName" class="form-label">Application Name:</label>
+            <input type="text" class="form-control" id="applicationName" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="submitDate" class="form-label">Submit Date:</label>
+            <input type="text" class="form-control" id="submitDate" readonly>
+          </div>
+          <div class="mb-3">
+            <label for="applicationDetails" class="form-label">Application Details:</label>
+            <textarea class="form-control" id="applicationDetails" rows="4" readonly style="height: auto;"></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label">Credit:</label>
+            $<input type="text" class="form-control" id="credit" value="0">
+          </div>
+          <div class="mb-3">
+            <label for="comment" class="form-label">Comment:</label>
+            <textarea class="form-control" id="comment" rows="6" style="height: auto;"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" onclick="updateApplication()">Save Changes</button>
+          <button type="button" class="btn btn-primary" onclick="updateStatus(1)">Approve</button>
+          <button type="button" class="btn btn-danger" onclick="updateStatus(2)">Reject</button>
+          <button type="button" class="btn btn-warning" onclick="updateStatus(0)">Put On Hold</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $('.enterprise-link').click(function () {
+      var applicationId = $(this).data('application-id');
+
+      $.ajax({
+        url: '/backend/get_application_details',
+        type: 'GET',
+        data: { application_id: applicationId },
+        success: function (response) {
+          $('#applicationId').val(response.applicationId);
+          $('#enterpriseNumber').val(response.enterpriseNumber);
+          $('#companyname').val(response.CompanyName);
+          $('#applicationName').val(response.applicationName);
+          $('#submitDate').val(response.submitDate);
+          $('#applicationDetails').val(response.applicationDetails);
+          $('#comment').val(response.comment ? response.comment : ''); // 如果comment是null，用空字符串代替
+
+          // 显示模态框
+          $('#exampleModal').modal('show');
+        },
+        error: function (error) {
+          alert('Failed to fetch application details');
+        }
+      });
+    });
+  });
+
+  function updateStatus(newStatus) {
+    var applicationId = $('#applicationId').val();
+    var user_id = $('#enterpriseNumber').val();
+    var credit = $('#credit').val();
+    $.ajax({
+        url: '/backend/update_application_status',
+        type: 'POST',
+        data: {
+            application_id: applicationId,
+            user_id: user_id,
+            new_status: newStatus,
+            credit: credit
+        },
+        success: function (response) {
+            alert('Status updated successfully');
+            location.reload();
+        },
+        error: function (error) {
+            alert('Failed to update status');
+        }
+    });
+}
+
+  function updateApplication() {
+    var applicationId = $('#applicationId').val();
+    var comment = $('#comment').val();
+
+    $.ajax({
+      url: '/backend/update_application',
+      type: 'POST',
+      data: {
+        application_id: applicationId,
+        comment: comment
+      },
+      success: function (response) {
+        alert('Application updated successfully');
+        location.reload();
+      },
+      error: function (error) {
+        alert('Failed to update application');
+      }
+    });
+  }
+</script>
+
+
+
+
+
+{% endblock %}

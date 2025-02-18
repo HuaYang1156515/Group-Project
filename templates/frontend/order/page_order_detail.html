@@ -1,0 +1,180 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+<main class="main">
+    <section class="mt-50 mb-50">
+
+        <div class="container">
+            <div class="row">
+                <div class="content-header">
+                    <div>
+                        <h2 class="content-title card-title">Order detail</h2>
+                        <p>Details for Order ID: {{order.order_sn}}</p>
+                    </div>
+                </div>
+                <div class="card">
+                    <header class="card-header">
+
+                        <div class="row align-orders-center">
+                            <div class="col-lg-6 col-md-6 mb-lg-0 mb-15">
+                                <span>
+                                    <i class="material-icons md-calendar_today"></i>
+                                    <b>{{order.create_time.strftime('%d/%m/%Y
+                                        %H:%M:%S')}}</b>
+                                </span> <br>
+                                <small class="text-muted">Order ID: {{order.order_sn}}</small>
+                                <input name="order_sn" value="{{order.order_sn}}" type="text" hidden>
+                            </div>
+                        </div>
+
+                    </header> <!-- card-header end// -->
+                    <div class="card-body">
+                        <div class="row mb-50 mt-20 order-info-wrap">
+                            <div class="col-md-4">
+                                <article class="icontext align-orders-start">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-person"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Customer</h6>
+                                        <p class="mb-1">
+                                            {{order.invoice_title}} <br> {{order.email}} <br>
+                                        </p>
+                                        <!--<a href="#">View profile</a>-->
+                                    </div>
+                                </article>
+                            </div> <!-- col// -->
+                            <div class="col-md-4">
+                                <article class="icontext align-orders-start">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-local_shipping"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Order info</h6>
+                                        <p class="mb-1">
+                                            Shipping: BsmpPost <br> Pay method: {{order.payplatform}} <br> Status: {%if
+                                            order.order_status == 1%} Unpaid
+                                            {%elif order.order_status == 2%}Preparing {%elif order.order_status == 3%}
+                                            Delivery
+                                            {%elif order.order_status == 0%}Completed {%elif order.order_status == 4%}
+                                            Canceled
+                                            {%endif%}
+                                        </p>
+
+                                    </div>
+                                </article>
+                            </div> <!-- col// -->
+                            <div class="col-md-4">
+                                <article class="icontext align-orders-start">
+                                    <span class="icon icon-sm rounded-circle bg-primary-light">
+                                        <i class="text-primary material-icons md-place"></i>
+                                    </span>
+                                    <div class="text">
+                                        <h6 class="mb-1">Deliver to</h6>
+                                        <p class="mb-1">
+                                            {%if order.street == 'Pick Up'%}
+                                            Customer will Pick up this order
+                                            {%else%}
+                                            Address: {{order.zip, order.street}} <br> {{order.city,
+                                            order.region,order.country}}
+                                            {%endif%}
+                                        </p>
+
+                                    </div>
+                                </article>
+                            </div> <!-- col// -->
+                        </div> <!-- row // -->
+                        <div class="row">
+                            <div class="col-lg-7">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th width="40%">Product</th>
+                                                <th width="20%">Unit Price</th>
+                                                <th width="20%">Quantity</th>
+                                                <th width="20%" class="text-end">Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {%for o in order_info %}
+                                            <tr>
+                                                <td>
+                                                    <a class="orderside"
+                                                        href="{{url_for('frontend.view_product',product_id = o.product_id)}}"
+                                                        target="_blank">
+                                                        <div class="left">
+                                                            <img src="{{o.pic_url}}" width="40" height="40"
+                                                                class="img-xs" alt="order">
+                                                        </div>
+                                                        <div class="info"> {{o.product_name}}, {{o.color}} - {{o.size}}
+                                                        </div>
+                                                    </a>
+                                                </td>
+                                                <td> ${{o.product_price - o.order_discount}} </td>
+                                                <td> {{o.product_cnt}} </td>
+                                                <td class="text-end"> ${{(o.product_price - o.order_discount) *
+                                                    o.product_cnt}} </td>
+                                            </tr>
+                                            {%endfor%}
+                                            <tr>
+                                                <td colspan="4">
+                                                    <article class="float-end">
+                                                        <dl class="dlist">
+                                                            <dt>Subtotal:</dt>
+                                                            <dd>${{order.order_money}}</dd>
+                                                        </dl>
+                                                        <dl class="dlist">
+                                                            <dt>Shipping cost:</dt>
+                                                            <dd>${{order.shipping_money}}</dd>
+                                                        </dl>
+                                                        <dl class="dlist">
+                                                            <dt>Grand total:</dt>
+                                                            <dd> <b class="h5">${{order.district_money}}</b> </dd>
+                                                        </dl>
+                                                        <dl class="dlist">
+                                                            <dt class="text-muted">Status:</dt>
+                                                            <dd>
+                                                                <span
+                                                                    class="badge rounded-pill alert-success text-success">Status:
+                                                                    {%if order.order_status == 1%} Unpaid
+                                                                    {%elif order.order_status == 2%}Order confirmed and
+                                                                    Preparing {%elif
+                                                                    order.order_status == 3%} Delivery
+                                                                    {%elif order.order_status == 0%}Completed {%elif
+                                                                    order.order_status == 4%} Canceled
+                                                                    {%endif%}</span>
+                                                            </dd>
+                                                        </dl>
+                                                    </article>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div> <!-- table-responsive// -->
+
+                            </div> <!-- col// -->
+                            <div class="col-lg-1"></div>
+                            <div class="col-lg-4">
+                                <div class="box shadow-sm bg-light">
+                                    <h6 class="mb-15">Payment info</h6>
+                                    <p>
+                                        {{order.platformnumber}} <br>
+                                        Business name: {{order.invoice_title}} <br>
+
+                                    </p>
+                                </div>
+
+                            </div> <!-- col// -->
+                        </div>
+                    </div> <!-- card-body end// -->
+                </div> <!-- card end// -->
+              
+            </div>
+        </div>
+    </section> <!-- content-main end// -->
+</main>
+{% endblock %}

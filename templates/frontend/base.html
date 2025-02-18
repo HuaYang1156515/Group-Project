@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/static/frontend/imgs/logo/smart_king_logo.svg">
+    <!-- Template CSS -->
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='frontend/css/main.css') }}">
+
+    <title>{% block title %}{% endblock %}</title>
+</head>
+
+<body>
+    <header class="header-area header-style-1 header-height-2">
+        <div class="header-top header-top-ptb-1 d-none d-lg-block">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-xl-3 col-lg-4">
+                        <div class="header-info">
+                            <ul>
+                                <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-4">
+                        <div class="text-center">
+                            <div id="news-flash" class="d-inline-block">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-3 col-lg-4">
+                        <div class="header-info header-info-right">
+                            <ul>
+                                {% if current_user.is_authenticated%}
+                                <li><i class="fi-rs-user"></i><a href="{{url_for('frontend.page_account')}}">account</a>
+                                    <i class="fi-rs-user"></i><a href="{{url_for('logout')}}">logout</a>
+                                </li>
+                                {%else%}
+                                <li><i class="fi-rs-user"></i><a href="{{url_for('login')}}">Log In / Sign Up</a>
+                                </li>
+
+                                {%endif%}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
+            <div class="container">
+                <div class="header-wrap">
+                    <div class="logo logo-width-1">
+                        <a href="{{url_for('frontend.dashboard')}}"><img
+                                src="/static/frontend/imgs/logo/smart_king_logo.svg" alt="logo"></a>
+                    </div>
+                    <div class="header-right">
+                        <div class="search-style-2">
+                            <form action="{{url_for('frontend.search')}}" method="post">
+
+                                <select class="select-active">
+                                    {%for cate in categories_list%}
+                                    <option value="{{cate.cate_id}}">{{cate.name}}</option>
+                                    {%endfor%}
+                                </select>
+
+                                <input type="text" placeholder="Search for items..." name="search_text">
+                                <button>Search</button>
+                            </form>
+                        </div>
+                        <div class="header-action-right">
+                            <div class="header-action-2">
+                                <div class="header-action-icon-2">
+                                    <a href="{{url_for('frontend.message_list')}}">
+                                        <img class="svgInject" alt="Evara"
+                                            src="{{ url_for('static', filename='frontend/imgs/theme/icons/icon-heart.svg') }}">
+                                        <span class="pro-count blue">{{message_count}}</span>
+                                    </a>
+                                </div>
+                                <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="{{url_for('frontend.view_cart')}}">
+                                        <img alt="Evara"
+                                            src="{{ url_for('static', filename='frontend/imgs/theme/icons/icon-cart.svg') }}">
+                                        <span class="pro-count blue">{{cart_count}}</span>
+                                    </a>
+                                    <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                        <ul>
+                                            {%for product in cart_list%}
+                                            <li>
+                                                <div class="shopping-cart-img">
+                                                    <a
+                                                        href="{{url_for('frontend.view_product',product_id = product.product_id)}}"><img
+                                                            alt="Evara" src="{{ product.pic_url}}"></a>
+                                                </div>
+                                                <div class="shopping-cart-title">
+                                                    <h4> <a
+                                                            href="{{url_for('frontend.view_product',product_id = product.product_id)}}">Daisy
+                                                            Casual Bag</a></h4>
+                                                    <h4><span>{{product.product_amount}} × </span>${{product.discount}}
+                                                    </h4>
+                                                </div>
+                                                <div class="shopping-cart-delete">
+                                                    <a
+                                                        href="{{url_for('frontend.delete_cart',cart_id = product.cart_id)}}"><i
+                                                            class="fi-rs-cross-small"></i></a>
+                                                </div>
+                                            </li>
+                                            {%endfor%}
+                                        </ul>
+                                        <div class="shopping-cart-footer">
+
+                                            <div class="shopping-cart-button">
+                                                <a href="{{url_for('frontend.view_cart')}}" class="outline">View
+                                                    cart</a>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="header-bottom header-bottom-bg-color sticky-bar">
+            <div class="container">
+                <div class="header-wrap header-space-between position-relative">
+                    <div class="logo logo-width-1 d-block d-lg-none">
+                        <a href="{{ url_for('frontend.view_categories', cate_id=0, t_cate_id=0) }}"><img src="/static/frontend/imgs/logo/smart_king_logo.svg" alt="logo"></a>
+                    </div>
+                    <div class="header-nav d-none d-lg-flex">
+                        <div class="main-categori-wrap d-none d-lg-block">
+                            <a class="categori-button-active" href="#">
+                                <span class="fi-rs-apps"></span> Browse Categories
+                            </a>
+                            <div class="categori-dropdown-wrap categori-dropdown-active-large">
+                                <ul>
+                                    {%for cate in categories_list%}
+                                    <li>
+                                        <a
+                                            href="{{url_for('frontend.view_categories', cate_id = cate.cate_id,t_cate_id = 0)}}"><i
+                                                class="evara-font-dress"></i>{{cate.name}}</a>
+                                    </li>
+                                    {%endfor%}
+                                </ul>
+                             
+                            </div>
+                        </div>
+                        <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
+                            <nav>
+                                <ul>
+                                    <li><a class="active" href="{{url_for('frontend.dashboard')}}">Home</a>
+
+                                    </li>
+                                    <li><a href="#">Help <i class="fi-rs-angle-down"></i></a>
+                                        <ul class="sub-menu">
+                                            <li><a href="{{url_for('frontend.shipping_fee')}}">Shipping Fee</a></li>
+                                        </ul>
+                                    </li>
+
+
+
+
+                                    <li>
+                                        <a href="{{url_for('frontend.contact')}}">Contact</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url_for('frontend.page_about') }}">About</a>
+                                    </li>
+                                    <li>
+                                        <a href="{{ url_for('frontend.page_news') }}">News</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                    <div class="hotline d-none d-lg-block">
+                        <p><i class="fi-rs-headset"></i><span>Hotline</span> 021-1234 5678 </p>
+                    </div>
+                    <p class="mobile-promotion">Happy <span class="text-brand">Mother's Day</span>. Big Sale Up to 40%
+                    </p>
+                    <div class="header-action-right d-block d-lg-none">
+                        <div class="header-action-2">
+                            <div class="header-action-icon-2">
+                                <a href="shop-wishlist.html">
+                                    <img alt="Evara"
+                                        src="{{ url_for('static', filename='frontend/imgs/theme/icons/icon-heart.svg') }}">
+                                    <span class="pro-count white">4</span>
+                                </a>
+                            </div>
+                            <div class="header-action-icon-2">
+                                <a class="mini-cart-icon" href="shop-cart.html">
+                                    <img alt="Evara"
+                                        src="{{ url_for('static', filename='frontend/imgs/theme/icons/icon-cart.svg') }}">
+                                    <span class="pro-count white">2</span>
+                                </a>
+                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
+                                    <ul>
+                                        <li>
+                                            <div class="shopping-cart-img">
+                                                <a href="shop-product-right.html"><img alt="Evara"
+                                                        src="{{ url_for('static', filename='frontend/imgs/shop/thumbnail-3.jpg') }}"></a>
+                                            </div>
+                                            <div class="shopping-cart-title">
+                                                <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
+                                                <h3><span>1 × </span>$800.00</h3>
+                                            </div>
+                                            <div class="shopping-cart-delete">
+                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="shopping-cart-img">
+                                                <a href="shop-product-right.html"><img alt="Evara"
+                                                        src="{{ url_for('static', filename='frontend/imgs/shop/thumbnail-4.jpg') }}"></a>
+                                            </div>
+                                            <div class="shopping-cart-title">
+                                                <h4><a href="shop-product-right.html">Macbook Pro 2022</a></h4>
+                                                <h3><span>1 × </span>$3500.00</h3>
+                                            </div>
+                                            <div class="shopping-cart-delete">
+                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                    <div class="shopping-cart-footer">
+                                        <div class="shopping-cart-total">
+                                            <h4>Total <span>$383.00</span></h4>
+                                        </div>
+                                        <div class="shopping-cart-button">
+                                            <a href="{{url_for('frontend.view_cart')}}">View cart</a>
+                                            <a href="shop-checkout.html">Checkout</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="header-action-icon-2 d-block d-lg-none">
+                                <div class="burger-icon burger-icon-white">
+                                    <span class="burger-icon-top"></span>
+                                    <span class="burger-icon-mid"></span>
+                                    <span class="burger-icon-bottom"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+
+    {% block content %} {% endblock %}
+
+
+
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+    <div class="flash" id="flash-message">{{ message }}</div>
+    {% endfor %}
+    <footer class="main">
+
+
+        <section class="section-padding footer-mid">
+            <div class="container pt-15 pb-20">
+                <div class="row">
+                    <div class="col-lg-4 col-md-6">
+                        <div class="widget-about font-md mb-md-5 mb-lg-0">
+                            <div class="logo logo-width-1 wow fadeIn animated">
+                                <a href="index.html"><img
+                                        src="{{ url_for('static', filename='frontend/imgs/logo/smart_king_logo.svg') }}"
+                                        alt="logo"></a>
+                            </div>
+                            <button onclick="openChat()" class="btn  btn-md">Chat With Our Staff</button>
+                            <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
+                            <p class="wow fadeIn animated">
+                                <strong>Address: </strong>xxxx xxxx xxxx xxxx
+                            </p>
+                            <p class="wow fadeIn animated">
+                                <strong>Phone: </strong>+021 1111111
+                            </p>
+                            <p class="wow fadeIn animated">
+                                <strong>Hours: </strong>10:00 - 18:00, Mon - Sat
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Online Chat</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div id="chatbox">
+                                        <div id="messages"></div>
+                                        <textarea class="form-control" id="message" placeholder="Enter your message"
+                                            rows="2" style="height: auto;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+
+                                    <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal" onclick="closeChat()">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class=" col-lg-2 col-md-3">
+                        <h5 class="widget-title wow fadeIn animated">About</h5>
+                        <ul class="footer-list wow fadeIn animated mb-sm-5 mb-md-0">
+                            <li> <a href="{{ url_for('frontend.page_about') }}">About Us</a></li>
+                            <li><a href="#">Delivery Information</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms &amp; Conditions</a></li>
+                            <li><a href="{{url_for('frontend.contact')}}">Contact Us</a></li>
+                            <li><a href="#">Support Center</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2  col-md-3">
+                        <h5 class="widget-title wow fadeIn animated">My Account</h5>
+                        <ul class="footer-list wow fadeIn animated">
+                            <li><a href="#">Sign In</a></li>
+                            <li><a href="#">View Cart</a></li>
+                            <li><a href="#">My Wishlist</a></li>
+                            <li><a href="#">Track My Order</a></li>
+                            <li><a href="#">Help</a></li>
+                            <li><a href="#">Order</a></li>
+                        </ul>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <div class="container pb-20 wow fadeIn animated">
+            <div class="row">
+                <div class="col-12 mb-20">
+                    <div class="footer-bottom"></div>
+                </div>
+
+                <div class="col-lg-6">
+                    <p class="text-lg-end text-start font-sm text-muted mb-0">
+                        Designed by © Copyright 2024 Group k - SmartKing All rights reserved.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Vendor JS-->
+    <script src="{{ url_for('static', filename='frontend/js/vendor/modernizr-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/vendor/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/vendor/jquery-migrate-3.3.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/vendor/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/slick.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/jquery.syotimer.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/wow.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/jquery-ui.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/perfect-scrollbar.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/magnific-popup.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/select2.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/waypoints.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/counterup.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/jquery.countdown.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/images-loaded.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/isotope.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/scrollup.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/jquery.vticker-min.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/jquery.theia.sticky.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/plugins/jquery.elevatezoom.js') }}"></script>
+    <!-- Template  JS -->
+    <script src="{{ url_for('static', filename='frontend/js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='frontend/js/shop.js') }}"></script>
+    <script>
+        // 在页面加载后，8 秒后隐藏 Flash 消息
+        window.onload = function () {
+            setTimeout(function () {
+                var flashMessage = document.getElementById('flash-message');
+                flashMessage.style.display = 'none';
+            }, 5000); // 5 秒后隐藏
+        };
+
+        $(document).ready(function () {
+            // 当点击购物车按钮时显示/隐藏下拉菜单
+            $('.cart-btn').click(function () {
+                // 切换下拉菜单的显示状态
+                $('.dropdown-cart').toggleClass('show');
+            });
+
+            // 当点击页面其他地方时隐藏下拉菜单
+            $(document).click(function (event) {
+                // 如果点击事件不是在购物车按钮或下拉菜单上触发的
+                if (!$(event.target).closest('.cart-btn, .dropdown-cart').length) {
+                    // 隐藏下拉菜单
+                    $('.dropdown-cart').removeClass('show');
+                }
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script>
+        let session_id = null;
+        let user_id = null;
+        let lastMessageTimestamp = new Date(0).toISOString(); // 初始时间戳
+        let isPolling = true;
+        function fetchUserId() {
+            fetch('/get_user_id')
+                .then(response => response.json())
+                .then(data => {
+                    user_id = data.user_id;
+                })
+                .catch(error => {
+                    console.error('Error fetching user_id:', error);
+                });
+        }
+
+
+
+        function openChat() {
+            $('#exampleModal').modal('show');
+            fetchUserId();
+            fetch('/start_chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.session_id) {
+                        session_id = data.session_id;
+                        // 开始长轮询以获取历史聊天记录
+                        fetchChatHistory(session_id);
+                    } else {
+                        alert('No available employees');
+                    }
+                });
+        }
+
+        function fetchChatHistory(sessionId) {
+            if (!isPolling) return;
+            fetch('/chat_history', {
+                method: 'POST',
+                body: JSON.stringify({ session_id: sessionId }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var messagesDiv = document.getElementById('messages');
+                    messagesDiv.innerHTML = ''; // 清空消息列表
+                    data.forEach(chat => {
+                        var newMessage = document.createElement('div');
+                        newMessage.classList.add('message');
+
+                        var messageContent = document.createElement('div');
+                        messageContent.classList.add('message-content');
+
+                        if (chat.sender_id == user_id) {
+                            newMessage.classList.add('right');
+                            messageContent.textContent = 'me: ' + chat.chat;
+                        } else {
+                            newMessage.classList.add('left');
+                            messageContent.textContent = chat.username + ': ' + chat.chat;
+                        }
+
+                        newMessage.appendChild(messageContent);
+                        messagesDiv.appendChild(newMessage);
+
+                        // 更新最后一条消息的时间戳
+
+                    });
+
+                    // 自动滚动到底部
+                    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+                    // 继续长轮询
+                    if (isPolling) {
+                        setTimeout(fetchChatHistory(sessionId, 1000));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching chat history:', error);
+                    // 出现错误时也要继续长轮询，间隔5秒再重试
+                    setTimeout(() => fetchChatHistory(sessionId), 5000);
+                });
+        }
+
+        function sendMessage() {
+            var message = document.getElementById('message').value;
+            fetch('/send_message', {
+                method: 'POST',
+                body: JSON.stringify({ session_id: session_id, message: message }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(() => {
+                    document.getElementById('message').value = '';
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                });
+        }
+
+        function closeChat() {
+            isPolling = false;
+            $('#exampleModal').modal('hide');
+            fetch('/close_chat', {
+                method: 'POST',
+                body: JSON.stringify({ session_id: session_id }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Session closed successfully');
+                })
+                .catch(error => {
+                    console.error('Error closing session:', error);
+                });
+        }
+    </script>
+    <style>
+        .flash {
+            background-color: #ffcc00;
+            color: #333;
+            border: 1px solid #ffcc00;
+            padding: 20px;
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+
+
+        .message {
+            display: flex;
+            margin: 10px 0;
+        }
+
+        .message.right {
+            justify-content: flex-end;
+        }
+
+        .message.left {
+            justify-content: flex-start;
+        }
+
+        .message-content {
+            padding: 10px;
+            border-radius: 5px;
+            max-width: 60%;
+        }
+
+        .message.right .message-content {
+            background-color: #d1ffd1;
+            text-align: right;
+        }
+
+        .message.left .message-content {
+            background-color: #ffd1d1;
+            text-align: left;
+        }
+    </style>
+</body>
+
+</html>

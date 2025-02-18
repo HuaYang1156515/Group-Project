@@ -1,0 +1,21 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}
+Belmont Station Merino & Possum - News
+{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 20px 0;">
+    <h4>Here you can see our latest promotion news!</h4>
+</div>
+<div class="news-container" style="text-align: center;padding: 20px;">
+    {% for news_item in news %}
+        <div class="news-item" style="border-bottom: 1px solid #ccc; padding: 10px 0;">
+            <h3>{{ news_item.title }}</h3>
+            <p>{{ news_item.content }}</p>
+            <p><small>{{ news_item.date }}</small></p>
+        </div>
+    {% endfor %}
+</div>
+{% endblock %}
+

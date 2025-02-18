@@ -1,0 +1,77 @@
+{% extends "frontend/base.html" %}
+
+{% block title %}
+Belmont Station Merino & Possum - System Message
+{% endblock %}
+
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> Refund
+                
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <form action="{{ url_for('frontend.insert_refund') }}" method="post" onsubmit="return validateForm(event)">
+                <input type="text" required="" name="order_sn" value="{{product_info.order_sn}}" hidden>
+                <input type="text" required="" name="product_id" value="{{product_info.product_id}}" hidden>
+            <div class="form-group">
+                <label>Product Name:<span class="required">*</span></label>    <input type="text"  name="product_name" value="{{product_info.product_name}}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Price: <span class="required">*</span></label> <input type="text"  name="price" value="{{product_info.product_price - product_info.order_discount}}" readonly>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Color: <span class="required">*</span></label><input type="text"  name="color" value="{{product_info.color}}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Size: <span class="required">*</span></label><input type="text"  name="size" value="{{product_info.size}}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Quantity: <span class="required">*</span></label><input type="text"  name="qtn" value="{{product_info.product_cnt}}" readonly>
+            </div>
+            <div class="form-group">
+                <label>Return Quantity: <span class="required">*</span></label><input type="text"  name="return_qtn" required>
+            </div>
+            <div class="form-group">
+                <label>Select Return Way: <span class="required">*</span></label>
+
+                <select name = "refund_way" style="border: 1px solid #000;" required>
+                    <option value="1">Payment Account</option>
+                    <option value="2">Balance</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Return Reason: <span class="required">*</span></label>
+            <textarea class="form-control" id="content" rows="5" name = "reason" style="height: auto;"></textarea>
+
+                        </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-fill-out btn-block hover-up"
+                    name="register">Apply</button>
+            </div>
+        </form>
+
+
+        </div>
+    </section>
+</main>
+<script>
+    function validateForm(event) {
+        var quantity = document.querySelector('input[name="qtn"]').value;
+        var returnQuantity = document.querySelector('input[name="return_qtn"]').value;
+
+        if (parseInt(returnQuantity) > parseInt(quantity)) {
+            alert("Return quantity cannot be greater than available quantity.");
+            event.preventDefault(); // 阻止表单提交
+            return false;
+        }
+        return true;
+    }
+</script>
+{% endblock %}

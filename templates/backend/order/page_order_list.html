@@ -1,0 +1,179 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Order List </h2>
+
+        </div>
+
+    </div>
+    <div class="card mb-4">
+        <header class="card-header">
+            <form id="trackOrderForm" class="contact-form-style mt-30 mb-50" method="post">
+                <div class="row gx-3">
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input id="order_id" name="order_id" type="text" placeholder="please enter order sn"
+                            class="form-control">
+
+                    </div>
+                    <div class="col-lg-4 col-md-6 me-auto">
+                        <input id="customer_name" name="customer_name" type="text"
+                            placeholder="please enter customer name" class="form-control">
+
+                    </div>
+
+                    <div class="col-lg-2 col-6 col-md-3">
+                        <select class="form-select" id="status">
+                            <option value="-1">All</option>
+                            <option value="1">Awaiting payment</option>
+                            <option value="2">Confirmed and Prepared </option>
+                            <option value="3">Delivered</option>
+                            <option value="0">Completed</option>
+                            <option value="4">Canceled</option>
+
+                        </select>
+                    </div>
+                    <div class="col-lg-2 col-6 col-md-3">
+                        <button class="btn btn-md rounded font-sm" type="submit">Search</button>
+                    </div>
+
+                </div>
+            </form>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Order Money</th>
+                            <th scope="col">Shipping fee</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Payment</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col" class="text-end"> Action </th>
+                        </tr>
+                    </thead>
+                    <tbody id="g_order_list">
+                        {%for item in items%}
+                        <tr>
+                            <td>{{item.order_sn}}</td>
+                            <td><b>{{item.invoice_title}}</b></td>
+                            <td>${{item.order_money}}</td>
+                            <td>${{item.shipping_money}}</td>
+                            <td>${{item.district_money}}</td>
+                            <td>${{item.payment_money}}</td>
+                            <td><span class="badge rounded-pill alert-warning">{%if item.order_status == 1%} Unpaid
+                                    {%elif item.order_status == 2%}Paid and order is Preparing {%elif item.order_status
+                                    == 3%} Delivery
+                                    {%elif item.order_status == 0%}Completed {%elif item.order_status == 4%} Canceled
+                                    {%endif%}</span></td>
+                            <td>{{item.create_time}}</td>
+                            <td class="text-end">
+                                <a href="{{url_for('backend.view_order',order_sn = item.order_sn)}}"
+                                    class="btn btn-md rounded font-sm">Detail</a>
+
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div> <!-- table-responsive //end -->
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+    <div class="pagination-area mt-30 mb-50">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-start">
+
+                {% if pagination.page > 1 %}
+                <li class="page-item"> <a
+                        href="{{ url_for('backend.order_list', page=pagination.page - 1) }}">Previous</a></li>
+                {% endif %}
+
+                {% for page_num in range(1, pagination.num_pages + 1) %}
+                <li class="page-item"> <a href="{{ url_for('backend.order_list', page=page_num) }}">{{ page_num }}</a>
+                </li>
+                {% endfor %}
+
+                {% if pagination.page < pagination.num_pages %} <li class="page-item"> <a
+                        href="{{ url_for('backend.order_list', page=pagination.page + 1) }}">Next</a></li>
+                    {% endif %}
+
+
+            </ul>
+        </nav>
+    </div>
+</section> <!-- content-main end// -->
+
+<script>
+    document.getElementById('trackOrderForm').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent form submission
+
+        var order_id = document.getElementById('order_id').value;
+        var customer_name = document.getElementById('customer_name').value;
+        var status = document.getElementById('status').value;
+        
+        // Check if at least one of the fields is not empty
+        //if (order_id.trim() === '' && customer_name.trim() === '') {
+        //    alert('Please enter at least Order ID or Customer Name.');
+          //  return;
+        //}
+
+        fetch('/backend/track_order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ order_id: order_id, customer_name: customer_name, status: status })
+        })
+            .then(response => response.json())
+            .then(data => {
+                var orderList = document.getElementById('g_order_list');
+                orderList.innerHTML = '';
+
+                data.orders.forEach(order => {
+                    var row = document.createElement('tr');
+
+                    row.innerHTML = `
+                <td>${order.order_sn}</td>
+                <td><b>${order.invoice_title}</b></td>
+                <td>$${order.order_money}</td>
+                <td>$${order.shipping_money}</td>
+                <td>$${order.district_money}</td>
+                <td>$${order.payment_money}</td>
+                <td><span class="badge rounded-pill alert-warning">${getStatusText(order.order_status)}</span></td>
+                <td>${new Date(order.create_time).toLocaleString()}</td>
+                <td class="text-end">
+                    <a href="/backend/view_order/${order.order_sn}" class="btn btn-md rounded font-sm">Detail</a>
+                   
+                </td>
+            `;
+
+                    orderList.appendChild(row);
+                });
+            });
+    });
+
+    function getStatusText(status) {
+        switch (status) {
+            case 1: return 'Awaiting payment';
+            case 2: return 'Confirmed and Prepare';
+            case 3: return 'Delivery';
+            case 0: return 'Completed';
+            case 4: return 'Canceled';
+            default: return 'Unknown';
+        }
+    }
+
+</script>
+{% endblock %}

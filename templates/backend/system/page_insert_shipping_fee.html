@@ -1,0 +1,54 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+
+    <div class="row">
+        <div class="col-9">
+            <div class="content-header">
+                <h2 class="content-title">Add New Shipping Fee</h2>
+               
+            </div>
+        </div>
+        <form action ="{{url_for('backend.insert_shipping_fee')}}" method="post" enctype="multipart/form-data">
+        <div class="col-lg-6">
+            <div class="card mb-4">
+               
+                <div class="card-body">
+                   
+                        <div class="mb-4">
+                           
+                            <label for="product_name" class="form-label">Destination <span class="required">*</span></label>
+                            <select class="form-control select-active" name="destination" required>
+                                <option value="Australia">Australia</option>
+                                <option value="CA|Canada">Canada</option>
+                                <option value="CN|China">China</option>
+                                <option value="NZ|New Zealand">New Zealand</option>
+                                <option value="US|USA (US)">USA (US)</option>
+                                <option value="EU|European Union">European Union</option>
+
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Price</label>
+                            <input type="text" placeholder="Type here" name="price" class="form-control" pattern="[0-9]+">
+                        </div>
+                    
+                </div>
+            </div> <!-- card end// -->
+        </div>
+        
+            <div>
+                <button class="btn btn-md rounded font-sm hover-up" type="submit">Save</button>
+            </div>
+        
+        </form>
+    </div>
+   
+</section> <!-- content-main end// -->
+
+{% endblock %}

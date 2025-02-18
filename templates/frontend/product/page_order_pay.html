@@ -1,0 +1,289 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum
+{% endblock %}
+
+
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> Pay
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="order_review">
+                        <div class="mb-20">
+                            <h4>Your Order's Details</h4>
+                        </div>
+                        <div class="table-responsive order_table text-center">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Product Img</th>
+                                        <th>Product name</th>
+                                        <th>Price</th>
+                                        <th>Discount</th>
+                                        <th>Product Quantity</th>
+                                        <th>Color</th>
+                                        <th>Size</th>
+                                        <th>Total Price</th>
+                                        <th>Action</th>
+                                        <th>Apply Refund</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    {%for p in order_list%}
+                                    <tr>
+                                        <td class="image product-thumbnail"><img src="{{p.pic_url}}" alt="#"></td>
+                                        <td>
+                                            <h5><a
+                                                    href="{{url_for('frontend.view_product',product_id = p.product_id)}}">{{p.product_name}}</a>
+                                            </h5> <span class="product-qty">x {{p.product_cnt}}</span>
+                                        </td>
+                                        <td>${{p.product_price}}</td>
+                                        <td>${{p.order_discount}}</td>
+                                        <td>{{p.product_cnt}}</td>
+                                        <td>{{p.color}}</td>
+                                        <td>{{p.size}}</td>
+                                        <td>${{p.order_cost}}</td>
+                                        {%if p.order_status == 0 and p.comment_count == 0%}
+                                        <td> <button type="button" class="btn btn-primary"
+                                                onclick="opencomment('{{ p.product_id }}')">Write Comment</button></td>
+                                        {%elif p.order_status == 0 and p.comment_count == 1%}
+                                        <td> <b> You have written comment</b></td>
+                                        {%else%}
+                                        <td>You can write a comment after receiving the packages</td>
+                                        {%endif%}
+                                        <td>
+                                            {%if p.order_status == 0 and (p.refund_status is none or p.refund_status == 'null') %}
+                                            <a
+                                                href="{{url_for('frontend.apply_refund',order_sn = p.order_sn,product_id = p.product_id,color = p.color,size= p.size)}}">Apply
+                                                Refund</a>
+                                            {%elif   p.refund_status == '0' %}
+                                                <b> Please waiting for feedback</b>
+                                            {%elif p.refund_status == '1'%}
+                                            <b> Refund Approved</b>
+                                            {%elif p.refund_status == '2' %}
+                                            <b> Refund Rejected</b>
+                                            {%endif%}
+                                        </td>
+
+                                    </tr>
+                                    {%endfor%}
+                                    <tr>
+                                        <th colspan="2">Shipping Cost: </th>
+                                        <td colspan="7"><em><span id="ship_cost">${{order.shipping_money}}</span></em>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="2">Total</th>
+                                        <td colspan="7" class="product-subtotal"><span class="font-xl text-brand fw-900"
+                                                id="subtotal">${{order.district_money}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            {%if order.order_status == 1 %}
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="toggle_info">
+                        <span><i class="fi-rs-label mr-10"></i> <a href="#balance" data-bs-toggle="collapse"
+                                class="collapsed" aria-expanded="false">Balance Payment</a></span>
+                    </div>
+                    <div class="panel-collapse collapse coupon_form " id="balance">
+                        <div class="panel-body">
+                            <p class="mb-30 font-sm">Balance</p>
+                            <form method="post" action="{{url_for('frontend.balance_pay')}}">
+                                <div class="form-group">
+                                    <input type="text" value="{{order.balance}}" readonly name="balance">
+                                    <input type="text" value="{{order.order_sn}}" readonly name="order_sn" hidden>
+                                    <input type="text" value="{{order.district_money}}" readonly name="district_money"
+                                        hidden>
+                                </div>
+                                <div class="form-group">
+                                    {%if order.district_money > order.balance%}
+                                    <p>Your balance is not enough to pay for this order, please use online payment</p>
+                                    {%else%}
+                                    <button class="btn  btn-md" type="submit">Pay</button>
+                                    {%endif%}
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="toggle_info">
+                        <span><i class="fi-rs-label mr-10"></i> <a href="#coupon" data-bs-toggle="collapse"
+                                class="collapsed" aria-expanded="false">Online Payment</a></span>
+                    </div>
+                    <div class="panel-collapse collapse coupon_form " id="coupon">
+                        <div class="panel-body">
+                            <p class="mb-30 font-sm">If you have a coupon code, please apply it below.</p>
+                            <form method="post" action="{{url_for('frontend.credit_pay')}}">
+                                <div class="form-group">
+                                    <label for="card_owner">Card Owner:</label><br>
+                                    <input type="text" id="card_owner" name="card_owner"><br>
+                                    <label for="card_no">Card Number:</label><br>
+                                    <input type="text" id="card_no" name="card_no"
+                                        pattern="\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}"
+                                        title="Please enter the 16-digit card number" required><br>
+                                    <label for="card_expire_date">Card Expiry Date:</label><br>
+                                    <select id="card_expire_month" name="card_expire_month"
+                                        style="border: 1px solid #000;">
+                                        <option value="">Month</option>
+                                        <option value="01">01</option>
+                                        <option value="02">02</option>
+                                        <option value="03">03</option>
+                                        <option value="04">04</option>
+                                        <option value="05">05</option>
+                                        <option value="06">06</option>
+                                        <option value="07">07</option>
+                                        <option value="08">08</option>
+                                        <option value="09">09</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                    <input type="text" value="{{order.order_sn}}" readonly name="order_sn" hidden>
+                                    <input type="text" value="{{order.district_money}}" readonly name="district_money"
+                                        hidden>
+                                    <!-- Select for Year -->
+                                    <select id="card_expire_year" name="card_expire_year"
+                                        style="border: 1px solid #000;">
+                                        <option value="">Year</option>
+                                        {% for year in range(2024, 2036) %}
+                                        <option value="{{ year }}">{{ year }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn  btn-md" type="submit">Pay Order</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            {%endif%}
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="mb-15">Add a review</h4>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="applicationId" class="form-label">Please choose rate:</label>
+
+                                <select id="rate" name="rate" style="border: 1px solid #000; width: 30%;">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Comment:</label>
+                                <textarea class="form-control" id="comment" rows="6" style="height: auto;"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-primary" onclick="writecomment()">Add Comment</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+    </section>
+</main>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    // JavaScript code executed after the page is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the input field for entering the card number
+        var cardNoInput = document.getElementById('card_no');
+
+        // Listen for input events
+        cardNoInput.addEventListener('input', function () {
+            // Remove all spaces from the input text
+            var cardNo = this.value.replace(/\s/g, '');
+
+            // Add a space after every 4 characters
+            var formattedCardNo = '';
+            for (var i = 0; i < cardNo.length; i++) {
+                if (i > 0 && i % 4 === 0) {
+                    formattedCardNo += ' ';
+                }
+                formattedCardNo += cardNo[i];
+            }
+
+            // Update the value of the input field
+            this.value = formattedCardNo;
+
+            // Limit the input length to 16 digits
+            if (this.value.length > 19) {
+                this.value = this.value.slice(0, 19);
+            }
+        });
+    });
+</script>
+<script>
+    var p_id = null;
+    function opencomment(product_id) {
+        $('#exampleModal').modal('show');
+        p_id = product_id;
+    }
+
+    function writecomment() {
+        var comment = document.getElementById('comment').value;
+        var rate = document.getElementById('rate').value;
+
+        $.ajax({
+            url: '/frontend/insert_comment',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                product_id: p_id,
+                comment: comment,
+                rate: rate
+            }),
+            success: function (response) {
+                alert('thank you for your feedback');
+                location.reload();
+            },
+            error: function (error) {
+                alert('Failed to write');
+            }
+        });
+    }
+
+</script>
+{% endblock %}

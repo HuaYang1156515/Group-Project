@@ -1,0 +1,197 @@
+{% extends "frontend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum
+{% endblock %}
+
+
+{% block content %}
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="{{url_for('frontend.dashboard')}}" rel="nofollow">Home</a>
+                <span></span> Shop
+                <span></span> Checkout
+            </div>
+        </div>
+    </div>
+    <section class="mt-50 mb-50">
+        <div class="container">
+          
+            <div class="row">
+                <div class="col-12">
+                    <div class="divider mt-50 mb-50"></div>
+                </div>
+            </div>
+            <form action="{{url_for('corporate.insert_order')}}" method="post">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-25">
+                            <h4>Billing Details</h4>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="text" required="" name="fname" placeholder="First name *"
+                                value="{{c_info.first_name}}">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" required="" name="lname" placeholder="Last name *"
+                                value="{{c_info.last_name}}">
+                        </div>
+                        
+                       
+                        <div class="form-group">
+                            <input required="" type="text" name="phone" placeholder="Phone *"
+                                value="{{c_info.phone_number}}">
+                        </div>
+                        <div class="form-group">
+                            <input required="" type="text" name="email" placeholder="Email address *"
+                                value="{{c_info.email}}">
+                        </div>
+                        <div class="form-group">
+                            <div class="custom_select">
+                                <B> Address: </B>
+                                <select id="addr" name="addr" style="border: 1px solid #000;" required>
+                                    <option value="">Select Address or Pick Up</option>
+                                    <option value="0">Pick Up</option>
+                                    {%for c in c_addr_list %}
+                                    <option value="{{c.id}}">{{c.street}} {{c.city}},{{c.region}} {{c.country}}
+                                        {{c.zip}}</option>
+                                    {%endfor%}
+                                </select>
+                            </div>
+                        </div>
+                         <div class="ship_detail">
+                            <div class="form-group" id ="pick-up" style="display: none;">
+                                <B> Pick Up Address:</B>
+                             xx   xxxxx xxxxx Road, Christchurch xxxx
+                            </div>
+                        <span id="addr-error" style="display: none; color: red;">Please select an address</span>
+                        </div>
+
+                    
+
+                    </div>
+                    <div class="col-md-6">
+                        <div class="order_review">
+                            <div class="mb-20">
+                                <h4>Your Orders</h4>
+                            </div>
+                            <div class="table-responsive order_table text-center">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th colspan="2">Product</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        {%for p in cart_list%}
+                                        <tr>
+                                            <td class="image product-thumbnail"><img src="{{p.pic_url}}" alt="#"></td>
+                                            <td>
+                                                <h5><a
+                                                        href="{{url_for('frontend.view_product',product_id = p.product_id)}}">{{p.product_name}}</a>
+                                                </h5> <span class="product-qty">x {{p.product_amount}}</span>
+                                            </td>
+                                            <td>${{p.price  * p.product_amount}}</td>
+                                        </tr>
+                                        {%endfor%}
+                                        <tr>
+                                            <th>SubTotal</th>
+                                            <td class="product-subtotal" colspan="2">$<span
+                                                    id="total">{{total_discount}}</span><input id="i_total"
+                                                    name="i_total" value="{{total_discount}}" hidden="true"></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Shipping</th>
+                                            <td colspan="2"><em>Cost: <span id="ship_cost"></span></em><input
+                                                    name="i_ship_cost" id="i_ship_cost" hidden="true"></td>
+                                        </tr>
+                                      
+                                        <tr>
+                                            <th>Total</th>
+                                            <td colspan="2" class="product-subtotal"><span
+                                                    class="font-xl text-brand fw-900" id="subtotal"></span><input
+                                                    name="i_subtoal" id="i_subtoal" hidden="true"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                           
+                            <button id="submitButton" type="submit" class="btn btn-fill-out btn-block hover-up"
+                                name="login">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>
+<script>
+      document.getElementById("addr").addEventListener("change", function () {
+    var selectedId = this.value; // 获取所选项的 value 值
+    var addr = document.getElementById("addr").value;
+    var errorSpan = document.getElementById("addr-error");
+    var pickUpDiv = document.getElementById("pick-up"); // 获取 pickUpDiv
+
+    if (selectedId === "") {
+        errorSpan.style.display = "inline";
+        pickUpDiv.style.display = "none"; // Hide pick-up address if no address is selected
+    } else if (selectedId === "0") { // 注意这里使用的是字符串 "0"
+        errorSpan.style.display = "none";
+        pickUpDiv.style.display = "block";
+        getShippingCost(selectedId); // Show pick-up address if "Pick Up" is selected
+    } else {
+        errorSpan.style.display = "none";
+        pickUpDiv.style.display = "none"; // Hide pick-up address if any other address is selected
+        getShippingCost(selectedId); // Call getShippingCost with the selected address
+    }
+});
+    // 获取运费
+    function getShippingCost(addr) {
+        var xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    var response = JSON.parse(xhr.responseText);
+                    var shipCost = response.ship_cost;
+
+                    // 更新 subtotal 元素的文本内容
+                    updateSubtotal(shipCost);
+                } else {
+                    console.error('Error:', xhr.status);
+                }
+            }
+        };
+       
+        xhr.open('GET', '/frontend/get_shipping_cost?addr=' + addr, true);
+        xhr.send();
+    }
+
+    // 更新 subtotal 元素的文本内容
+    function updateSubtotal(shipCost) {
+        // 获取subtotal元素和total输入框元素
+        var subtotalSpan = document.getElementById("subtotal");
+        var totalInput = document.getElementById("i_total");
+    
+        var ship_cost = document.getElementById("ship_cost");
+        // 将运费和total值相加，然后更新subtotal元素的文本内容
+       
+        var total = parseFloat(shipCost) + parseFloat(totalInput.value);
+        var subtotalInput = document.getElementById("i_subtoal");
+        var shipcostInput = document.getElementById("i_ship_cost");
+        var gst = document.getElementById("gst");
+        ship_cost.textContent = "$" + shipCost;
+        subtotalSpan.textContent = "Subtotal: $" + total.toFixed(2);
+        subtotalInput.value = total.toFixed(2);
+        shipcostInput.value = shipCost;
+       
+    }
+
+    
+</script>
+
+{% endblock %}

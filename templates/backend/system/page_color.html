@@ -1,0 +1,50 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+
+<section class="content-main">
+    <div class="content-header">
+        <div>
+            <h2 class="content-title card-title">Color </h2>
+         
+        </div>
+        
+    </div>
+    <div class="card mb-4">
+        <div class="card-body">
+            <form action ="{{ url_for('backend.insert_color') }}" method="post">
+                <div class="mb-4">
+                    <label for="product_name" class="form-label">color name</label>
+                    <input type="text" placeholder="Type here" name="color_name" class="form-control" id="product_name">
+                </div>
+                <div>
+                  
+                    <button class="btn btn-md rounded font-sm hover-up" type="submit">Publich</button>
+                </div>
+            </form>
+        </div>
+        </header> <!-- card-header end// -->
+        <div class="card-body">
+            <div class="row gx-3">
+                {%for c in color_list%}
+                <div class="col-xl-2 col-lg-3 col-md-4 col-6">
+                    <figure class="card border-1">
+                       
+                        <figcaption class="card-body text-center">
+                            <h6 class="card-title m-0">{{c.color_name}}</h6>
+                           
+                        </figcaption>
+                    </figure>
+                </div> <!-- col.// -->
+                {%endfor%}
+            </div> <!-- row.// -->
+        </div> <!-- card-body end// -->
+    </div> <!-- card end// -->
+</section> <!-- content-main end// -->
+
+
+{% endblock %}

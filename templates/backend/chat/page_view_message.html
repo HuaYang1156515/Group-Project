@@ -1,0 +1,132 @@
+{% extends "backend/base.html" %}
+{% block title %}
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main">
+
+    <div class="row justify-content-center">
+
+        <div class="content-header">
+            <h1>System Message</h1>
+        </div>
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Receiver Name</th>
+                            <th scope="col">Subject</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Action </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for m in messages_list %}
+                        <tr>
+                            <td>{{m.username}}</td>
+                            <td>{{m.subject}}</td>
+                            <td>{%if m.status == '0' %} Unread {%else%} read {%endif%}</td>
+                            <td>{{m.created_at.strftime('%d/%m/%Y %H:%M:%S')}}</td>
+                            <td>
+                                <a href="#" class="enterprise-link" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal" onclick="openmessage('{{m.id}}')">View Message</a> |
+                                <a href="#" class="enterprise-link" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal" onclick="deletemessage('{{m.id}}')">Delete</a>
+                            </td>
+                        </tr>
+                        {%endfor%}
+                    </tbody>
+                </table>
+            </div> <!-- table-responsive //end -->
+
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Message</h5>
+
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="applicationId" class="form-label">Message Subject:</label>
+                                <input type="text" class="form-control" id="subject">
+                            </div>
+                            <div id="chatbox">
+                                <div id="messages">Content</div>
+                                <textarea class="form-control" id="content" rows="5" style="height: auto;"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                onclick="closeChat()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.0/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+
+
+    function openmessage(id) {
+        $('#exampleModal').modal('show');
+
+
+        readmessage(id);
+    }
+
+    function closeChat() {
+
+        $('#exampleModal').modal('hide');
+
+    }
+    function readmessage(message_id) {
+
+        $.ajax({
+            url: '/backend/get_system_message',
+            type: 'POST',
+            data: {
+                message_id: message_id,
+            },
+            success: function (response) {
+                $('#subject').val(response.subject);
+                $('#content').val(response.content);
+            },
+            error: function (error) {
+                alert('Failed to update status');
+            }
+        });
+    }
+    function deletemessage(message_id) {
+
+        $.ajax({
+            url: '/backend/delete_system_message',
+            type: 'POST',
+            data: {
+                message_id: message_id,
+            },
+            success: function (response) {
+                alert('delete message successfully');
+                location.reload();
+            },
+            error: function (error) {
+                alert('Failed to update status');
+            }
+        });
+    }
+
+
+</script>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "backend/base.html" %}
+{% block title %}
+
+Belmont Station Merino & Possum - Admin page
+{% endblock %}
+{% block content %}
+
+<section class="content-main mt-80 mb-80">
+    <div class="card mx-auto card-login">
+        <div class="card-body">
+            <h4 class="card-title mb-4">Sign in</h4>
+            <form action="{{ url_for('backend.login') }}" method="post">
+                <div class="mb-3">
+                    <input class="form-control" name = "username" placeholder="Username or email" type="text">
+                </div> <!-- form-group// -->
+                <div class="mb-3">
+                    <input class="form-control" name = "password" placeholder="Password" type="password">
+                </div> <!-- form-group// -->
+                
+                <div class="mb-4">
+                    <button type="submit" class="btn btn-primary w-100"> Login </button>
+                </div> <!-- form-group// -->
+            </form>
+            
+        </div>
+    </div>
+</section>
+{% endblock %}
